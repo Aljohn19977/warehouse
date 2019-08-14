@@ -11,10 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+// Auth::routes();
+
+Route::group(['namespace' => 'Admin'], function(){
+
+Route::get('/receiving', 'ReceivingController@index');
+
+Route::get('/supplier', 'SupplierController@index')->name('supplier.index');
+Route::get('/supplier/create', 'SupplierController@create')->name('supplier.create');
+
 });
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
