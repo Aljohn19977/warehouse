@@ -1,62 +1,11 @@
 @extends('admin.partials.master')
 
 @section('style')
-<!-- Select2 -->
-<link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
+
 @endsection
 
 @section('script')
-<!-- Select2 -->
-<script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
-<script>
-$(document).ready(function(){
 
-  $('.select2').select2();
-
-  $.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-  });
-
-
-  $('#add_supplier').on('submit',function(event){
-      
-      event.preventDefault();
-      Pace.restart();
-
-      var form_data = $('#add_supplier').serialize();
-      var supplier_id = $('#supplier_id').val();
-      var full_name = $('#full_name').val();     
-      var address = $('#address').val();
-      var email = $('#email').val();
-      var tel_no = $('#tel_no').val();
-      var mobile_no = $('#mobile_no').val();
-      var photo = $('#photo').val();
-      var details = $('#details').val();
-      var remarks = $('#remarks').val();
-
-    
-      console.log(form_data);
-        Pace.track(function () {
-                  $.ajax({
-                        type: 'post',
-                        url: "{{ route('supplier.store') }}",
-                        data: form_data,
-                        success: function(data) {
-
-                        },
-                        error: function(error){
-
-                        }
-                    }); 
-        });
-      });  
-
-});
-
-
-</script>
 @endsection
 
 @section('control_sidebar')
@@ -76,13 +25,13 @@ $(document).ready(function(){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Supplier</h1>
+            <h1>Company</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Supplier</li>
-              <li class="breadcrumb-item active">Add Supplier</li>
+              <li class="breadcrumb-item active">Company</li>
+              <li class="breadcrumb-item active">Company Info</li>
             </ol>
           </div>
         </div>
@@ -92,27 +41,23 @@ $(document).ready(function(){
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
+        <!-- SELECT2 EXAMPLE -->
         <div class="card card-default">
           <div class="card-header">
-            <h3 class="card-title">Add Supplier</h3>
+            <h3 class="card-title">Company Info</h3>
           </div>
           <!-- /.card-header -->
-          <form role="form" method="post" id="add_supplier">
+          <form role="form">
           <div class="card-body">
             <div class="row">
               <div class="col-md-4">
                 <div class="form-group">
-                    <label for="supplier_id">Supplier ID</label>
+                    <label for="supplier_id">Company ID</label>
                     <input type="text" class="form-control" id="supplier_id" name="supplier_id" disabled>
                 </div>
                 <div class="form-group">
-                  <label>Company Name</label>
-                  <select class="form-control select2" style="width: 100%;">
-                    <option>Nestle</option>
-                    <option>KRAFT</option>
-                    <option>Del Monte</option>
-                    <option>KFC</option>
-                  </select>
+                    <label for="company_name">Company Name</label>
+                    <input type="text" class="form-control" id="company_name" name="company_name" placeholder="Company Name">
                 </div>
                 <div class="form-group">
                     <label for="full_name">Full Name</label>
@@ -137,9 +82,9 @@ $(document).ready(function(){
                     <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No">
                 </div>
                 <div class="form-group">
-                    <label for="photo">Image File</label>
+                    <label for="exampleInputFile">Image File</label>
                     <div class="input-group">
-                            <input type="file" id="photo">
+                            <input type="file" id="exampleInputFile">
                     </div>
                 </div>
               </div>
@@ -157,6 +102,7 @@ $(document).ready(function(){
             </div>
             <!-- /.row -->
           </div>
+          </form>
           <!-- /.card-body -->
           <div class="card-footer">
             <button type="submit" class="btn btn-primary">Back</button>
@@ -164,7 +110,6 @@ $(document).ready(function(){
             <button type="submit" class="btn btn-primary">Clear</button>
           </div>
         </div>
-        </form>
         <!-- /.card -->
         <!-- /.row -->
       </div><!-- /.container-fluid -->

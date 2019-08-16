@@ -56,7 +56,7 @@
             </a>
             <ul class="nav nav-treeview">
             <li class="nav-item">
-                <a href="{{ route('supplier.index') }}" class="nav-link">
+                <a href="{{ route('company.index') }}" class="nav-link">
                   <p>
                     Company
                   </p>

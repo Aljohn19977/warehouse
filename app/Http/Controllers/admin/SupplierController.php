@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class SupplierController extends Controller
 {
@@ -15,6 +16,16 @@ class SupplierController extends Controller
     public function index()
     {
         return view('admin.supplier.index');
+    }
+
+    public function get_supplier_id()
+    {
+        $supplier_prefix = 'STY';
+        
+        $supplier_id_not_clean = preg_replace("/[:-]/","", Carbon::now());
+        $supplier_id = preg_replace('/\s+/', '', $supplier_prefix.'-'.$supplier_id_not_clean);
+        
+        return response()->json(['supplier_id'=>$supplier_id]);
     }
 
     /**
