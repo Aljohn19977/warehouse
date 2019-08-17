@@ -8,15 +8,15 @@ class Supplier extends Model
 {
     public $table = "suppliers";
 
-    // protected $fillable = [
-    //     'name', 
-    //     'email', 
-    //     'password',
-    //     'password',
-    //     'password',
-    //     'password',
-    //     'password',
-    //     'password',
-    //     'password',
-    // ];
+    protected $fillable = [
+        'supplier_id', 
+        'name', 
+        'address',
+        'email',
+        'tel_no',
+        'mobile_no',
+        'photo',
+        'details',
+        'remarks',
+    ];
 }

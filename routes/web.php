@@ -21,10 +21,21 @@ Route::group(['namespace' => 'Admin'], function(){
 
 Route::get('/receiving', 'ReceivingController@index');
 
+
 Route::get('/supplier', 'SupplierController@index')->name('supplier.index');
-Route::get('/supplier/get_supplier_id', 'SupplierController@get_supplier_id')->name('supplier.get_supplier_id');
 Route::get('/supplier/create', 'SupplierController@create')->name('supplier.create');
+Route::get('/supplier/get_supplier_id', 'SupplierController@get_supplier_id')->name('supplier.get_supplier_id');
+Route::get('/supplier/edit/{id}', 'SupplierController@edit');
+Route::get('/supplier/{id}', 'SupplierController@show')->name('supplier.view');
+Route::get('/supplier/api/show/{id}', 'SupplierController@api_show_info')->name('supplier.api_view');
+Route::get('/supplier/api/company/list','SupplierController@api_company_list')->name('company.api_company_list');
+Route::post('/supplier/api/upload/photo/{id}', 'SupplierController@api_upload_photo')->name('supplier.api_upload_photo');
 Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
+Route::post('/supplier/update/{id}', 'SupplierController@update')->name('supplier.update');
+Route::post('/supplier/apiGetAllSupplier', 'SupplierController@apiGetAllSupplier')->name('company.apiGetAllSupplier');
+
+
+
 
 Route::get('/company', 'CompanyController@index')->name('company.index');
 Route::get('/company/create', 'CompanyController@create')->name('company.create');
