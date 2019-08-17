@@ -1,18 +1,13 @@
 @extends('admin.partials.master')
 
 @section('style')
-<!-- Select2 -->
-<link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
 
 @endsection
 
 @section('script')
-<!-- Select2 -->
-<script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
 <script>
 $(document).ready(function(){
-
-  $('.select2').select2();
+  
   get_company_id();
 
   $.ajaxSetup({

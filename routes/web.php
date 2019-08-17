@@ -27,8 +27,13 @@ Route::get('/supplier/create', 'SupplierController@create')->name('supplier.crea
 Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
 
 Route::get('/company', 'CompanyController@index')->name('company.index');
-Route::get('/company/get_company_id', 'CompanyController@get_company_id')->name('company.get_company_id');
 Route::get('/company/create', 'CompanyController@create')->name('company.create');
+Route::get('/company/get_company_id', 'CompanyController@get_company_id')->name('company.get_company_id');
+Route::get('/company/edit/{id}', 'CompanyController@edit');
+Route::get('/company/{id}', 'CompanyController@show')->name('company.view');
+Route::get('/company/api/show/{id}', 'CompanyController@api_show_info')->name('company.api_view');
+Route::post('/company/api/upload/photo/{id}', 'CompanyController@api_upload_photo')->name('company.api_upload_photo');
 Route::post('/company/store', 'CompanyController@store')->name('company.store');
-
+Route::post('/company/update/{id}', 'CompanyController@update')->name('company.update');
+Route::post('/company/apiGetAllCompany', 'CompanyController@apiGetAllCompany')->name('company.apiGetAllCompany');
 });

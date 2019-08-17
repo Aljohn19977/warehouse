@@ -10,16 +10,40 @@
 <!-- FastClick -->
 <script src="{{ asset('admin/plugins/fastclick/fastclick.js') }}"></script>
 <script>
-  $(function () {
-    $('#example2').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": true,
-    });
-  });
+
+$(document).ready(function(){
+
+$.ajaxSetup({
+headers: {
+  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+}
+});
+
+$('#example2').DataTable({
+            processing: true,
+             serverSide: true,
+             responsive: true,
+             paging: true,
+            lengthChange: true,
+            searching: true,
+              ordering: true,
+              autoWidth: true,
+             ajax: {
+                    'url' : "{{ route('company.apiGetAllCompany')}}",
+                    'dataType' : 'json',
+                    'type' : 'post',
+             },
+               columns : [
+                          {"data" : "company_id"},
+                          {"data" : "photo"},
+                          {"data" : "name"},
+                          {"data" : "email"},
+                          {"data" : "action"}
+                         ],
+                          
+                     
+});
+});
 </script>
 @endsection
 
@@ -58,7 +82,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Company List<a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-user-plus" style="color:white;"></i></a>
+              <h3 class="card-title">Company List<a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
             </h3>
             </div>
             <!-- /.card-header -->
@@ -67,34 +91,13 @@
                 <thead>
                 <tr>
                   <th>ID</th>
+                  <th>Photo</th>
                   <th>Name</th>
-                  <th>Company Name</th>
-                  <th>Tel.No</th>
                   <th>Email</th>
                   <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Trident</td>
-                        <td>Internet
-                          Explorer 4.0
-                        </td>
-                        <td>Win 95+</td>
-                        <td> 4</td>
-                        <td>X</td>
-                        <td>X</td>
-                      </tr>
-                      <tr>
-                          <td>Trident</td>
-                          <td>Internet
-                            Explorer 4.0
-                          </td>
-                          <td>Win 95+</td>
-                          <td> 4</td>
-                          <td>X</td>
-                          <td>X</td>
-                        </tr>
                 </tbody>
               </table>
             </div>
