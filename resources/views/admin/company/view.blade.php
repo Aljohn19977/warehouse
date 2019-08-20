@@ -1,11 +1,15 @@
 @extends('admin.partials.master')
 
 @section('style')
-
+<link rel="stylesheet" href="{{ asset('admin/plugins/datatables/dataTables.bootstrap4.css') }}">
 @endsection
 
 @section('script')
-
+<script src="{{ asset('admin/plugins/datatables/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('admin/plugins/datatables/dataTables.bootstrap4.js') }}"></script>
+<script>
+$('#example2').DataTable();
+</script>
 @endsection
 
 @section('control_sidebar')
@@ -91,7 +95,31 @@
               <div class="card-body">
                 <div class="tab-content">
                   <div class="active tab-pane" id="suppliers">
-
+                  <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Photo</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach( $companies->supplier as $supplier )
+                <tr>
+                  <td>{{ $supplier->supplier_id }}</td>
+                  <td><div class="text-center"> <img class="img-fluid img-circle"
+                       src="{{ asset($supplier->photo) }}" style="max-width:50px;"
+                       alt="User profile picture"> </div></td>
+                  <td>{{ $supplier->fullname }}</td>
+                  <td>{{ $supplier->email }}</td>
+                  <td>
+                      <a class="btn btn-success" href="/supplier/{{ $supplier->id }}" style="color:white;"><i class="fas fa-eye"></i></a></td>
+                  </tr>
+                @endforeach
+                </tbody>
+              </table>
                   </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="items">

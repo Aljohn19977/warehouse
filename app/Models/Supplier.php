@@ -19,4 +19,9 @@ class Supplier extends Model
         'details',
         'remarks',
     ];
+
+    
+    public function company(){
+        return $this->belongsToMany('App\Models\Company');
+    }
 }

@@ -20,4 +20,7 @@ class Company extends Model
         'remarks',
     ];
 
+    public function supplier(){
+        return $this->belongsToMany('App\Models\Supplier');
+    }
 }

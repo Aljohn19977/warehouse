@@ -13,10 +13,10 @@
 $(document).ready(function(){
 
       //Initialize Select2 Elements
-      $('.select2').select2()
+      var $company_multi_select = $('.select2').select2();
       
 
-      get_company_list();
+  get_company_list();
   get_supplier_id();
 
   $.ajaxSetup({
@@ -45,7 +45,7 @@ $(document).ready(function(){
      }); 
   }
 
-    function get_company_list(){
+  function get_company_list(){
     $.ajax({
         type: 'get',
         url: "{{ route('company.api_company_list') }}",
@@ -63,7 +63,7 @@ $(document).ready(function(){
   }
 
   function clear_fields(){
-      $('#name').val('');
+      $('#fullname').val('');
       $('#address').val('');
       $('#email').val('');
       $("#tel_no").val('');
@@ -71,6 +71,7 @@ $(document).ready(function(){
       $("#photo").val('');
       $("#details").val('');
       $("#remarks").val('');
+      $company_multi_select.val(null).trigger("change");
   }
 
   function clearError(){
@@ -88,7 +89,8 @@ $(document).ready(function(){
       event.preventDefault();
       Pace.restart();
       var formData = new FormData(this);
-      formData.append( 'supplier_id', $('#supplier_id').val() );
+      
+      formData.append( 'supplier_id', $('#supplier_id').val());
 
         Pace.track(function () {
                   $.ajax({
@@ -179,10 +181,10 @@ $(document).ready(function(){
                       <label for="name">Full Name</label>
                       <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name">
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" id="company_this">
                   <label>Company</label>
                   <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                  <select class="select2" id="company" name="company" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                  <select class="select2" id="company" name="company[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
                   </select>
                   </div>
                   <div class="form-group" id="address_this">

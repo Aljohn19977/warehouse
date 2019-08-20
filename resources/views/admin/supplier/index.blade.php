@@ -34,9 +34,9 @@ $('#example2').DataTable({
                     'type' : 'post',
              },
                columns : [
-                          {"data" : "company_id"},
+                          {"data" : "supplier_id"},
                           {"data" : "photo"},
-                          {"data" : "name"},
+                          {"data" : "fullname"},
                           {"data" : "email"},
                           {"data" : "action"}
                          ],

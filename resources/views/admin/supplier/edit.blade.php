@@ -1,10 +1,13 @@
 @extends('admin.partials.master')
 
 @section('style')
-
+<!-- Select2 -->
+<link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
 @endsection
 
 @section('script')
+<!-- Select2 -->
+<script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
 <script>
 $(document).ready(function(){
 
@@ -15,6 +18,10 @@ $.ajaxSetup({
   }
 });
 
+var $company_multi_select = $('.select2').select2();
+
+get_company_list();
+
 const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -22,11 +29,11 @@ const Toast = Swal.mixin({
     timer: 3000
 });
 
-function api_company_info(){
+function api_supplier_info(){
 
   $.ajax({
         type: 'get',
-        url: "{{ route('company.api_view',['id' => $companies->id ]) }}",
+        url: "{{ route('supplier.api_view',['id' => $suppliers->id ]) }}",
         success: function(data) {
           $("#box_photo").attr("src","/"+data.photo);
            $.each(data, function(key, value){                         
@@ -38,6 +45,23 @@ function api_company_info(){
         }
      }); 
 }
+
+  function get_company_list(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('company.api_company_list') }}",
+        success: function(data) {
+
+        JSON.parse(data).data.forEach(row => {
+            $("#company").append('<option value="'+row.id+'">'+row.name+'</option>');
+        })
+
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+  }
 
 
 
@@ -52,7 +76,7 @@ $('#reset').click(function(event){
   Pace.track(function () {
   $.ajax({
         type: 'get',
-        url: "{{ route('company.api_view',['id' => $companies->id ]) }}",
+        url: "{{ route('supplier.api_view',['id' => $suppliers->id ]) }}",
         success: function(data) {
            $.each(data, function(key, value){                         
               $('#'+key+'').val(value);
@@ -92,12 +116,12 @@ $('#change_photo').click(function(event){
               Pace.track(function () {
               $.ajax({
                   method: 'post',
-                  url: "{{ route('company.api_upload_photo',['id' => $companies->id ]) }}",
+                  url: "{{ route('supplier.api_upload_photo',['id' => $suppliers->id ]) }}",
                   data: formData,
                   processData: false,
                   contentType: false,
                   success: function (data) {
-                    api_company_info();
+                    api_supplier_info();
                     Toast.fire({
                             type: 'success',
                             title: name+' Successfully Change.'
@@ -116,16 +140,16 @@ $('#change_photo').click(function(event){
     })
 });
 
-$('#update_company').on('submit',function(event){
+$('#update_supplier').on('submit',function(event){
 
     event.preventDefault();
     Pace.restart();
     var formData = new FormData(this);
-    formData.append( 'company_id', $('#company_id').val() );
+    formData.append( 'supplier_id', $('#supplier_id').val() );
 
       Pace.track(function () {
                 $.ajax({
-                      url: "{{ route('company.update',['id' => $companies->id ]) }}",
+                      url: "{{ route('supplier.update',['id' => $suppliers->id ]) }}",
                       type: "post",
                       data:formData,
                       cache:false,
@@ -181,7 +205,7 @@ $('#update_company').on('submit',function(event){
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Edit Company Info</li>
+              <li class="breadcrumb-item active">Edit Supplier Info</li>
             </ol>
           </div>
         </div>
@@ -207,28 +231,28 @@ $('#update_company').on('submit',function(event){
                   </div>
                   </div>
                   <img class="profile-user-img img-fluid img-circle"
-                       src="{{ asset($companies->photo) }}"
+                       src="{{ asset($suppliers->photo) }}"
                        alt="User profile picture" id="box_photo">
                 </div>
-                <h3 class="profile-username text-center" id="box_name" >{{ $companies->name }}</h3>
-                <p class="text-muted text-center" id="box_company_id">{{ $companies->company_id }}</p>
+                <h3 class="profile-username text-center" id="box_fullname" >{{ $suppliers->fullname }}</h3>
+                <p class="text-muted text-center" id="box_supplier_id">{{ $suppliers->supplier_id }}</p>
 
                 <ul class="list-group list-group-unbordered mb-3">
                   <li class="list-group-item">
                     <strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
-                    <p class="text-muted" id="box_address">{{ $companies->address }}</p>
+                    <p class="text-muted" id="box_address">{{ $suppliers->address }}</p>
                   </li>
                   <li class="list-group-item">
                     <strong><i class="fas fa-envelope mr-1"></i> Email</strong>
-                    <p class="text-muted" id="box_email">{{ $companies->email }}</p>
+                    <p class="text-muted" id="box_email">{{ $suppliers->email }}</p>
                   </li>
                   <li class="list-group-item">
                     <strong><i class="fas fa-mobile-alt mr-1"></i> Mobile No.</strong>
-                    <p class="text-muted" id="box_mobile_no">{{ $companies->mobile_no }}</p>
+                    <p class="text-muted" id="box_mobile_no">{{ $suppliers->mobile_no }}</p>
                   </li>
                   <li class="list-group-item">
                     <strong><i class="fas fa-phone-alt mr-1"></i> Tel no.</strong>
-                    <p class="text-muted" id="box_tel_no">{{ $companies->tel_no }}</p>
+                    <p class="text-muted" id="box_tel_no">{{ $suppliers->tel_no }}</p>
                   </li>
                 </ul>
               </div>
@@ -249,45 +273,51 @@ $('#update_company').on('submit',function(event){
               <div class="card-body">
                 <div class="tab-content">
                   <div class="active tab-pane" id="settings">
-                    <form class="form-horizontal" role="form" method="post" id="update_company">
+                    <form class="form-horizontal" role="form" method="post" id="update_supplier">
             <div class="card-body">
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
                       <label for="company_id">Company ID</label>
-                      <input type="text" class="form-control" id="company_id" name="company_id" value="{{ $companies->company_id }}" disabled>
+                      <input type="text" class="form-control" id="supplier_id" name="supplier_id" value="{{ $suppliers->supplier_id }}" disabled>
                   </div>
                   <div class="form-group">
-                      <label for="name">Name</label>
-                      <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="{{ $companies->name }}">
+                      <label for="name">Full Name</label>
+                      <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name" value="{{ $suppliers->fullname }}">
+                  </div>
+                  <div class="form-group" id="company_this">
+                  <label>Company</label>
+                  <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                  <select class="select2" id="company" name="company[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                  </select>
                   </div>
                   <div class="form-group">
                       <label for="address">Address</label>
-                      <input type="text" class="form-control" id="address" name="address" placeholder="Address" value="{{ $companies->address }}">
+                      <input type="text" class="form-control" id="address" name="address" placeholder="Address" value="{{ $suppliers->address }}">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
                       <label for="email">Email Address</label>
-                      <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" value="{{ $companies->email }}">
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" value="{{ $suppliers->email }}">
                   </div>
                   <div class="form-group">
                       <label for="tel_no">Telephone No.</label>
-                      <input type="text" class="form-control" id="tel_no" name="tel_no" placeholder="Telephone No" value="{{ $companies->tel_no }}">
+                      <input type="text" class="form-control" id="tel_no" name="tel_no" placeholder="Telephone No" value="{{ $suppliers->tel_no }}">
                   </div>
                   <div class="form-group">
                       <label for="mobile_no">Mobile No.</label>
-                      <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No" value="{{ $companies->mobile_no }}">
+                      <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No" value="{{ $suppliers->mobile_no }}">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
                       <label>Details</label>
-                      <textarea class="form-control" id="details" name="details" rows="2" placeholder="Details...">{{ $companies->details }}</textarea>
+                      <textarea class="form-control" id="details" name="details" rows="2" placeholder="Details...">{{ $suppliers->details }}</textarea>
                   </div>
                   <div class="form-group">
                       <label>Remarks</label>
-                      <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="Remarks...">{{ $companies->remarks }}</textarea>
+                      <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="Remarks...">{{ $suppliers->remarks }}</textarea>
                   </div>
                 </div>
                 <!-- /.col -->

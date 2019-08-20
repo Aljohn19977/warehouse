@@ -70,10 +70,10 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-
+        
         $this->validate($request,[
             'supplier_id' => 'required|max:255',
-            'name' => 'required|max:255',
+            'fullname' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
             'mobile_no' => 'required|max:255',
@@ -81,6 +81,7 @@ class SupplierController extends Controller
             'details' => 'max:255',
             'remarks' => 'max:255',
             'photo' => 'image|max:5000',
+            'company' => 'required',
         ]);
 
         $filePath = null;
@@ -92,9 +93,11 @@ class SupplierController extends Controller
                 $filePath ="images/supplier/$filename";
         }
 
+
+
         $supplier = new Supplier;
         $supplier->supplier_id = $request->supplier_id;
-        $supplier->name = $request->name;
+        $supplier->fullname = $request->fullname;
         $supplier->address = $request->address;
         $supplier->email = $request->email;
         $supplier->tel_no = $request->tel_no;
@@ -103,6 +106,12 @@ class SupplierController extends Controller
         $supplier->details = $request->details;
         $supplier->remarks = $request->remarks;
         $supplier->save();
+
+
+                  
+               $supplier->company()->sync($request->company);
+ 
+        
 
         return response()->json(['success'=>'Success']);
 
@@ -182,7 +191,7 @@ class SupplierController extends Controller
 
         $this->validate($request,[
             'supplier_id' => 'required|max:255',
-            'name' => 'required|max:255',
+            'fullname' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
             'mobile_no' => 'required|max:255',
@@ -190,12 +199,13 @@ class SupplierController extends Controller
             'details' => 'max:255',
             'remarks' => 'max:255',
             'photo' => 'image|max:5000',
+            'company' => 'required',
         ]);
 
 
         $supplier = Supplier::findOrfail($id);
         $supplier->supplier_id = $request->supplier_id;
-        $supplier->name = $request->name;
+        $supplier->fullname = $request->fullname;
         $supplier->address = $request->address;
         $supplier->email = $request->email;
         $supplier->tel_no = $request->tel_no;
@@ -203,6 +213,10 @@ class SupplierController extends Controller
         $supplier->details = $request->details;
         $supplier->remarks = $request->remarks;
         $supplier->update();
+
+                   
+           $supplier->company()->sync($request->company);
+        
 
         return response()->json(['success'=>'Success']);
     }
@@ -295,7 +309,7 @@ class SupplierController extends Controller
           $nestedData['photo']  ='<div class="text-center">
           <img class="img-fluid img-circle" src="/'.$value->photo.'" style="max-width:50px;" alt="User profile picture">
         </div>';
-          $nestedData['fullname']  = $value->name;
+          $nestedData['fullname']  = $value->fullname;
           $nestedData['email']  = $value->email; 
           $nestedData['action']  = '<a class="btn btn-primary" href="supplier/edit/'.$value->id.'" style="color:white;"><i class="fas fa-pen"></i></a>
                                    <a class="btn btn-success" href="supplier/'.$value->id.'" style="color:white;"><i class="fas fa-eye"></i></a>
