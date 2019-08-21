@@ -52,6 +52,30 @@ class SupplierController extends Controller
         return json_encode($json_data);
     }
 
+    public function api_selected_company($id){
+
+        $suppliers = Supplier::findOrFail($id);
+
+        $selected_company = $suppliers->company;
+
+        $selected = array();
+
+
+        foreach($selected_company as $value) {
+
+            array_push($selected,$value->id);
+
+        }
+
+        $json_data = array(
+            "data" => $selected,  
+          );
+
+
+        return json_encode($json_data);
+
+    }   
+
     /**
      * Show the form for creating a new resource.
      *
@@ -109,7 +133,7 @@ class SupplierController extends Controller
 
 
                   
-               $supplier->company()->sync($request->company);
+        $supplier->company()->sync($request->company);
  
         
 
@@ -136,14 +160,17 @@ class SupplierController extends Controller
 
         return response()->json([
             'supplier_id'=> $suppliers->supplier_id,
-            'name'=> $suppliers->name,
+            'fullname'=> $suppliers->fullname,
             'address'=> $suppliers->address,
             'email'=> $suppliers->email,
             'tel_no'=> $suppliers->tel_no,
             'mobile_no'=> $suppliers->mobile_no,
-            'photo'=> $suppliers->photo 
+            'photo'=> $suppliers->photo, 
+            'remarks'=> $suppliers->remarks ,
+            'description'=> $suppliers->description 
             ]);
     }
+
 
     public function api_upload_photo(Request $request, $id){
 
@@ -176,6 +203,7 @@ class SupplierController extends Controller
     public function edit($id)
     {
         $suppliers = Supplier::findOrFail($id);
+
         return view('admin.supplier.edit',compact('suppliers'));
     }
 

@@ -48,7 +48,7 @@ $(document).ready(function(){
   function get_company_list(){
     $.ajax({
         type: 'get',
-        url: "{{ route('company.api_company_list') }}",
+        url: "{{ route('supplier.api_company_list') }}",
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {

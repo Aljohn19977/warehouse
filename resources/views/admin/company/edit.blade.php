@@ -56,6 +56,7 @@ $('#reset').click(function(event){
         success: function(data) {
            $.each(data, function(key, value){                         
               $('#'+key+'').val(value);
+              $('#'+key+'').text(value);
            });
         },
         error: function(error){

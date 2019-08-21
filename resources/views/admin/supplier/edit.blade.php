@@ -20,7 +20,9 @@ $.ajaxSetup({
 
 var $company_multi_select = $('.select2').select2();
 
+
 get_company_list();
+
 
 const Toast = Swal.mixin({
     toast: true,
@@ -46,22 +48,47 @@ function api_supplier_info(){
      }); 
 }
 
-  function get_company_list(){
+function get_company_list(){
     $.ajax({
         type: 'get',
-        url: "{{ route('company.api_company_list') }}",
+        url: "{{ route('supplier.api_company_list') }}",
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
             $("#company").append('<option value="'+row.id+'">'+row.name+'</option>');
         })
 
+        api_selected_company();
+
         },
         error: function(error){
           console.log('error');
         }
      }); 
-  }
+
+}
+
+function api_selected_company(){
+
+    $.ajax({
+        type: 'get',
+        dataType: 'JSON',
+        url: "{{ route('supplier.api_selected_company',['id' => $suppliers->id ]) }}",
+        success: function(data) {
+
+            var test = data.data;
+
+            $company_multi_select.val(test).trigger("change");
+
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+
+       
+
+}
 
 
 
@@ -80,6 +107,7 @@ $('#reset').click(function(event){
         success: function(data) {
            $.each(data, function(key, value){                         
               $('#'+key+'').val(value);
+              $('#'+key+'').text(value);
            });
         },
         error: function(error){
@@ -158,7 +186,7 @@ $('#update_supplier').on('submit',function(event){
                       dataType: 'JSON',
                       success: function(data) {
                         clearError();
-                        api_company_info();
+                        api_supplier_info();
                         Toast.fire({
                           type: 'success',
                           title: name+' Successfully Updated.'
@@ -200,7 +228,7 @@ $('#update_supplier').on('submit',function(event){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Company</h1>
+            <h1>Supplier</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -265,7 +293,7 @@ $('#update_supplier').on('submit',function(event){
           <div class="col-md-9">
             <div class="card">
               <div class="card-header p-2">
-              <a href="{{ route('company.index') }}" class="btn btn-danger float-right"><i class="nav-icon fas fa-long-arrow-alt-left" style="color:white; margin-right:10px;"></i>Back</a>
+              <a href="{{ route('supplier.index') }}" class="btn btn-danger float-right"><i class="nav-icon fas fa-long-arrow-alt-left" style="color:white; margin-right:10px;"></i>Back</a>
                 <ul class="nav nav-pills">
                   <li class="nav-item"><a class="active nav-link" href="#settings" data-toggle="tab"><i class="fas fa-pen mr-1"></i>Edit Info</a></li>
                 </ul>

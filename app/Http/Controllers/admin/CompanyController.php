@@ -110,7 +110,9 @@ class CompanyController extends Controller
             'email'=> $companies->email,
             'tel_no'=> $companies->tel_no,
             'mobile_no'=> $companies->mobile_no,
-            'photo'=> $companies->photo 
+            'photo'=> $companies->photo ,
+            'remarks'=> $companies->remarks ,
+            'description'=> $companies->description 
             ]);
     }
 

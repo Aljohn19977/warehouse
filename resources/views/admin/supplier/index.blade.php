@@ -64,12 +64,12 @@ $('#example2').DataTable({
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Company</h1>
+            <h1>Supplier</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Company</li>
+              <li class="breadcrumb-item active">Supplier</li>
             </ol>
           </div>
         </div>

@@ -168,12 +168,6 @@ $('#example2').DataTable();
                       <label>Remarks</label>
                       <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="Remarks...">{{ $companies->remarks }}</textarea>
                   </div>
-                  <div class="form-group">
-                      <label for="photo">Image File</label>
-                      <div class="input-group">
-                              <input type="file" name="photo" id="photo">
-                      </div>
-                  </div>
                 </div>
                 <!-- /.col -->
               </div>
