@@ -5,10 +5,9 @@ namespace App\Http\Controllers\admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use App\Models\Company;
-use DD;
+use App\Models\Warehouse;
 
-class CompanyController extends Controller
+class WarehouseController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,17 +16,18 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return view('admin.company.index');
+        return view('admin.warehouse.index');
     }
 
-    public function get_company_id()
+    
+    public function get_warehouse_id()
     {
-        $company_prefix = 'CMP';
+        $warehouse_prefix = 'WRH';
         
-        $company_id_not_clean = preg_replace("/[:-]/","", Carbon::now());
-        $company_id = preg_replace('/\s+/', '', $company_prefix.'-'.$company_id_not_clean);
+        $warehouse_id_not_clean = preg_replace("/[:-]/","", Carbon::now());
+        $warehouse_id = preg_replace('/\s+/', '', $warehouse_prefix.'-'.$warehouse_id_not_clean);
         
-        return response()->json(['company_id'=>$company_id]);
+        return response()->json(['warehouse_id'=>$warehouse_id]);
     }
 
     /**
@@ -37,7 +37,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return view('admin.company.add');
+        return view('admin.warehouse.add');
     }
 
     /**
@@ -48,9 +48,9 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-
+        
         $this->validate($request,[
-            'company_id' => 'required|max:255',
+            'warehouse_id' => 'required|max:255',
             'name' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
@@ -66,25 +66,28 @@ class CompanyController extends Controller
         if($request->hasFile('photo')){
                 $file = $request->file('photo');
                 $filename =time().$file->getClientOriginalName();
-                $file->move('images/company/',$filename);
-                $filePath ="images/company/$filename";
+                $file->move('images/warehouse/',$filename);
+                $filePath ="images/warehouse/$filename";
         }
 
-        $company = new Company;
-        $company->company_id = $request->company_id;
-        $company->name = $request->name;
-        $company->address = $request->address;
-        $company->email = $request->email;
-        $company->tel_no = $request->tel_no;
-        $company->mobile_no = $request->mobile_no;
-        $company->photo = $filePath;
-        $company->details = $request->details;
-        $company->remarks = $request->remarks;
-        $company->save();
+
+
+        $warehouse = new Warehouse;
+        $warehouse->warehouse_id = $request->warehouse_id;
+        $warehouse->name = $request->name;
+        $warehouse->address = $request->address;
+        $warehouse->email = $request->email;
+        $warehouse->tel_no = $request->tel_no;
+        $warehouse->mobile_no = $request->mobile_no;
+        $warehouse->photo = $filePath;
+        $warehouse->details = $request->details;
+        $warehouse->remarks = $request->remarks;
+        $warehouse->save();
 
         return response()->json(['success'=>'Success']);
 
     }
+
 
     /**
      * Display the specified resource.
@@ -94,25 +97,26 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        $companies = Company::findOrFail($id);
+        $warehouses = Warehouse::findOrFail($id);
 
-        return view('admin.company.view',compact('companies'));
+        return view('admin.warehouse.view',compact('warehouses'));
     }
+
 
     public function api_show_info($id)
     {
-        $companies = Company::findOrFail($id);
+        $warehouses = Warehouse::findOrFail($id);
 
         return response()->json([
-            'company_id'=> $companies->company_id,
-            'name'=> $companies->name,
-            'address'=> $companies->address,
-            'email'=> $companies->email,
-            'tel_no'=> $companies->tel_no,
-            'mobile_no'=> $companies->mobile_no,
-            'photo'=> $companies->photo ,
-            'remarks'=> $companies->remarks,
-            'details'=> $companies->details 
+            'warehouse_id'=> $warehouses->warehouse_id,
+            'name'=> $warehouses->name,
+            'address'=> $warehouses->address,
+            'email'=> $warehouses->email,
+            'tel_no'=> $warehouses->tel_no,
+            'mobile_no'=> $warehouses->mobile_no,
+            'photo'=> $warehouses->photo ,
+            'remarks'=> $warehouses->remarks ,
+            'details'=> $warehouses->details 
             ]);
     }
 
@@ -127,13 +131,13 @@ class CompanyController extends Controller
         if($request->hasFile('photo')){
                 $file = $request->file('photo');
                 $filename =time().$file->getClientOriginalName();
-                $file->move('images/company/',$filename);
-                $filePath ="images/company/$filename";
+                $file->move('images/warehouse/',$filename);
+                $filePath ="images/warehouse/$filename";
         }
 
-        $company = Company::findOrfail($id);
-        $company->photo = $filePath;
-        $company->update();
+        $warehouses = Warehouse::findOrfail($id);
+        $warehouses->photo = $filePath;
+        $warehouses->update();
 
         return response()->json(['success'=>'Success']);
     }
@@ -146,8 +150,8 @@ class CompanyController extends Controller
      */
     public function edit($id)
     {
-        $companies = Company::findOrFail($id);
-        return view('admin.company.edit',compact('companies'));
+        $warehouses = Warehouse::findOrFail($id);
+        return view('admin.warehouse.edit',compact('warehouses'));
     }
 
     /**
@@ -159,9 +163,8 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $this->validate($request,[
-            'company_id' => 'required|max:255',
+            'warehouse_id' => 'required|max:255',
             'name' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
@@ -173,16 +176,17 @@ class CompanyController extends Controller
         ]);
 
 
-        $company = Company::findOrfail($id);
-        $company->company_id = $request->company_id;
-        $company->name = $request->name;
-        $company->address = $request->address;
-        $company->email = $request->email;
-        $company->tel_no = $request->tel_no;
-        $company->mobile_no = $request->mobile_no;
-        $company->details = $request->details;
-        $company->remarks = $request->remarks;
-        $company->update();
+        $warehouse = Warehouse::findOrfail($id);
+        $warehouse->warehouse_id = $request->warehouse_id;
+        $warehouse->name = $request->name;
+        $warehouse->address = $request->address;
+        $warehouse->email = $request->email;
+        $warehouse->tel_no = $request->tel_no;
+        $warehouse->mobile_no = $request->mobile_no;
+        $warehouse->details = $request->details;
+        $warehouse->remarks = $request->remarks;
+        $warehouse->update();
+
 
         return response()->json(['success'=>'Success']);
     }
@@ -198,10 +202,10 @@ class CompanyController extends Controller
         //
     }
 
-    public function apiGetAllCompany(Request $request)
+    public function apiGetAllWarehouse(Request $request)
     {
       $columns = array(
-        0 => 'company_id',
+        0 => 'warehouse_id',
         1 => 'photo',
         2 => 'name',
         3 => 'email'
@@ -210,7 +214,7 @@ class CompanyController extends Controller
  
       // this will return the # of rows
  
-      $totalData = Company::all()->count();
+      $totalData = Warehouse::all()->count();
      
       //static requests
  
@@ -228,15 +232,15 @@ class CompanyController extends Controller
  
         //query if no values on search text
  
-          $companies = Company::offset($start)
+          $warehouses = Warehouse::offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir)
-                ->get(['id','company_id','photo','name','email']);
+                ->get(['id','warehouse_id','photo','name','email']);
  
  
                 //return # of rows filtered (just copy the query of the post above and remove the get() and change to count() to return the # of rows)
  
-                $totalFiltered = Company::all()->count();
+                $totalFiltered = Warehouse::all()->count();
       }
       else
       {
@@ -244,18 +248,18 @@ class CompanyController extends Controller
  
          // if search has a value (you can use inner join)
  
-         $companies = Company::WhereRaw("(company_id AND name LIKE ?)", "%{$search}%")
-                ->orWhereRaw("(company_id AND email LIKE ?)", "%{$search}%")
+         $warehouses = Warehouse::WhereRaw("(warehouse_id AND name LIKE ?)", "%{$search}%")
+                ->orWhereRaw("(Warehouser_id AND email LIKE ?)", "%{$search}%")
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir)
-                ->get(['id','company_id','photo','name','email']);
+                ->get(['id','warehouse_id','photo','name','email']);
  
  
           //copy
  
-         $totalFiltered = Company::WhereRaw("(company_id AND name LIKE ?)", "%{$search}%")
-                ->orWhereRaw("(company_id AND email LIKE ?)", "%{$search}%")
+         $totalFiltered = Supplier::WhereRaw("(warehouse_id AND name LIKE ?)", "%{$search}%")
+                ->orWhereRaw("(warehouse_id AND email LIKE ?)", "%{$search}%")
                 ->count();
                 //return # of rows filtered (just copy the query of the post above and remove the get() and change to count() to return the # of rows)
         
@@ -266,19 +270,19 @@ class CompanyController extends Controller
       $data = array();
  
  
-      if ($companies)
+      if ($warehouses)
       {
-        foreach ($companies as $value) {
+        foreach ($warehouses as $value) {
  
           //store the values here
-          $nestedData['company_id']  = $value->company_id;
+          $nestedData['warehouse_id']  = $value->warehouse_id;
           $nestedData['photo']  ='<div class="text-center">
           <img class="img-fluid img-circle" src="/'.$value->photo.'" style="max-width:50px;" alt="User profile picture">
         </div>';
-          $nestedData['name']  = $value->name;
+          $nestedData['fullname']  = $value->fullname;
           $nestedData['email']  = $value->email; 
-          $nestedData['action']  = '<a class="btn btn-primary" href="company/edit/'.$value->id.'" style="color:white;"><i class="fas fa-pen"></i></a>
-                                   <a class="btn btn-success" href="company/'.$value->id.'" style="color:white;"><i class="fas fa-eye"></i></a>
+          $nestedData['action']  = '<a class="btn btn-primary" href="warehouse/edit/'.$value->id.'" style="color:white;"><i class="fas fa-pen"></i></a>
+                                   <a class="btn btn-success" href="warehouse/'.$value->id.'" style="color:white;"><i class="fas fa-eye"></i></a>
                                    <a class="btn btn-danger" style="color:white;"><i class="fas fa-trash"></i></a>';       
     
           //pass to data

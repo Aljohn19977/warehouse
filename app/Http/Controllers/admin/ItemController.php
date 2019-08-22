@@ -4,6 +4,8 @@ namespace App\Http\Controllers\admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use App\Models\Item;
 
 class ItemController extends Controller
 {
@@ -14,7 +16,17 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.item.index');
+    }
+
+    public function get_item_id()
+    {
+        $supplier_prefix = 'ITM';
+        
+        $supplier_id_not_clean = preg_replace("/[:-]/","", Carbon::now());
+        $supplier_id = preg_replace('/\s+/', '', $supplier_prefix.'-'.$supplier_id_not_clean);
+        
+        return response()->json(['supplier_id'=>$supplier_id]);
     }
 
     /**
@@ -24,7 +36,7 @@ class ItemController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.item.add');
     }
 
     /**

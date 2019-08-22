@@ -166,8 +166,8 @@ class SupplierController extends Controller
             'tel_no'=> $suppliers->tel_no,
             'mobile_no'=> $suppliers->mobile_no,
             'photo'=> $suppliers->photo, 
-            'remarks'=> $suppliers->remarks ,
-            'description'=> $suppliers->description 
+            'remarks'=> $suppliers->remarks,
+            'details'=> $suppliers->details
             ]);
     }
 
@@ -260,7 +260,7 @@ class SupplierController extends Controller
         //
     }
 
-    public function apiGetAllsupplier(Request $request)
+    public function apiGetAllSupplier(Request $request)
     {
       $columns = array(
         0 => 'supplier_id',

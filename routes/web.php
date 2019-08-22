@@ -22,6 +22,25 @@ Route::group(['namespace' => 'Admin'], function(){
 Route::get('/receiving', 'ReceivingController@index');
 
 
+Route::get('/item', 'ItemController@index')->name('item.index');
+Route::get('/item/create', 'ItemController@create')->name('item.create');
+Route::get('/item/get_item_id', 'ItemController@get_item_id')->name('item.get_item_id');
+// Route::get('/supplier/edit/{id}', 'SupplierController@edit');
+// Route::get('/supplier/{id}', 'SupplierController@show')->name('supplier.view');
+// Route::get('/supplier/api/show/{id}', 'SupplierController@api_show_info')->name('supplier.api_view');
+// Route::get('/supplier/api/selected_company/{id}', 'SupplierController@api_selected_company')->name('supplier.api_selected_company');
+// Route::get('/supplier/api/company/list','SupplierController@api_company_list')->name('supplier.api_company_list');
+
+// Route::post('/supplier/api/upload/photo/{id}', 'SupplierController@api_upload_photo')->name('supplier.api_upload_photo');
+// Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
+// Route::post('/supplier/update/{id}', 'SupplierController@update')->name('supplier.update');
+// Route::post('/supplier/apiGetAllSupplier', 'SupplierController@apiGetAllSupplier')->name('company.apiGetAllSupplier');
+
+
+
+
+
+
 Route::get('/supplier', 'SupplierController@index')->name('supplier.index');
 Route::get('/supplier/create', 'SupplierController@create')->name('supplier.create');
 Route::get('/supplier/get_supplier_id', 'SupplierController@get_supplier_id')->name('supplier.get_supplier_id');
@@ -35,6 +54,19 @@ Route::post('/supplier/api/upload/photo/{id}', 'SupplierController@api_upload_ph
 Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
 Route::post('/supplier/update/{id}', 'SupplierController@update')->name('supplier.update');
 Route::post('/supplier/apiGetAllSupplier', 'SupplierController@apiGetAllSupplier')->name('company.apiGetAllSupplier');
+
+
+Route::get('/warehouse', 'WarehouseController@index')->name('warehouse.index');
+Route::get('/warehouse/create', 'WarehouseController@create')->name('warehouse.create');
+Route::get('/warehouse/get_warehouse_id', 'WarehouseController@get_warehouse_id')->name('warehouse.get_warehouse_id');
+Route::get('/warehouse/edit/{id}', 'WarehouseController@edit');
+Route::get('/warehouse/{id}', 'WarehouseController@show')->name('warehouse.api_view');
+Route::get('/warehouse/api/show/{id}', 'WarehouseController@api_show_info')->name('warehouse.api_view');
+
+Route::post('/warehouse/api/upload/photo/{id}', 'WarehouseController@api_upload_photo')->name('warehouse.api_upload_photo');
+Route::post('/warehouse/store', 'WarehouseController@store')->name('warehouse.store');
+Route::post('/warehouse/update/{id}', 'WarehouseController@update')->name('warehouse.update');
+Route::post('/warehouse/apiGetAllWarehouse', 'WarehouseController@apiGetAllWarehouse')->name('warehouse.apiGetAllWarehouse');
 
 
 

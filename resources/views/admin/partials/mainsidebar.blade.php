@@ -65,14 +65,21 @@
               <li class="nav-item">
                 <a href="#" class="nav-link">
                   <p>
-                    Items
+                    Item
                   </p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{ route('supplier.index') }}" class="nav-link">
                   <p>
-                    Suppliers
+                    Supplier
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('warehouse.index') }}" class="nav-link">
+                  <p>
+                    Warehouse
                   </p>
                 </a>
               </li>
