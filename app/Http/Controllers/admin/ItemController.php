@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Models\Item;
+use App\Models\Supplier;
 
 class ItemController extends Controller
 {
@@ -26,7 +27,29 @@ class ItemController extends Controller
         $supplier_id_not_clean = preg_replace("/[:-]/","", Carbon::now());
         $supplier_id = preg_replace('/\s+/', '', $supplier_prefix.'-'.$supplier_id_not_clean);
         
-        return response()->json(['supplier_id'=>$supplier_id]);
+        return response()->json(['item_id'=>$supplier_id]);
+    }
+
+    public function api_supplier_list()
+    {
+        $suppliers = Supplier::get(['id','fullname']);
+        
+        $data = array();
+ 
+        if ($suppliers)
+        {
+          foreach ($suppliers as $value) {
+            $nestedData['id']  = $value->id;
+            $nestedData['name']  = $value->fullname;
+            $data[] = $nestedData;
+          }
+        }
+        
+        $json_data = array(
+          "data" => $data,  
+        );
+
+        return json_encode($json_data);
     }
 
     /**

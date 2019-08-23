@@ -24,4 +24,8 @@ class Supplier extends Model
     public function company(){
         return $this->belongsToMany('App\Models\Company');
     }
+
+    public function item(){
+        return $this->belongsToMany('App\Models\Item');
+    }
 }

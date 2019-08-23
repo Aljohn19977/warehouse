@@ -12,12 +12,13 @@
 <script>
 $(document).ready(function(){
 
-      //Initialize Select2 Elements
-      var $company_multi_select = $('.select2').select2();
-      
 
-  get_company_list();
-  get_supplier_id();
+      $('.select2').select2();
+      get_supplier_id();
+
+
+  get_supplier_list();
+  // get_supplier_id();
 
   $.ajaxSetup({
     headers: {
@@ -35,9 +36,9 @@ $(document).ready(function(){
   function get_supplier_id(){
     $.ajax({
         type: 'get',
-        url: "{{ route('supplier.get_supplier_id') }}",
+        url: "{{ route('item.get_item_id') }}",
         success: function(data) {
-           $('#supplier_id').val(data.supplier_id);
+           $('#item_id').val(data.item_id);
         },
         error: function(error){
           console.log('error');
@@ -45,14 +46,14 @@ $(document).ready(function(){
      }); 
   }
 
-  function get_company_list(){
+  function get_supplier_list(){
     $.ajax({
         type: 'get',
-        url: "{{ route('supplier.api_company_list') }}",
+        url: "{{ route('item.api_supplier_list') }}",
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
-            $("#company").append('<option value="'+row.id+'">'+row.name+'</option>');
+            $("#supplier").append('<option value="'+row.id+'">'+row.name+'</option>');
         })
 
         },
@@ -148,13 +149,13 @@ $(document).ready(function(){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Supplier</h1>
+            <h1>Item</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Supplier</li>
-              <li class="breadcrumb-item active">Add Supplier</li>
+              <li class="breadcrumb-item active">Item</li>
+              <li class="breadcrumb-item active">Add Itemlier</li>
             </ol>
           </div>
         </div>
@@ -166,7 +167,7 @@ $(document).ready(function(){
       <div class="container-fluid">
         <div class="card card-default">
           <div class="card-header">
-            <h3 class="card-title">Add Supplier</h3>
+            <h3 class="card-title">Add Item</h3>
           </div>
           <!-- /.card-header -->
           <form role="form" method="post" id="add_supplier" enctype="multipart/form-data">
@@ -174,61 +175,78 @@ $(document).ready(function(){
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
-                      <label for="supplier_id">Supplier ID</label>
-                      <input type="text" class="form-control" id="supplier_id" name="supplier_id" disabled>
+                      <label for="item_id">Item ID</label>
+                      <input type="text" class="form-control" id="item_id" name="item_id" disabled>
                   </div>
                   <div class="form-group" id="name_this">
-                      <label for="name">Full Name</label>
-                      <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name">
-                  </div>
-                  <div class="form-group" id="company_this">
-                  <label>Company</label>
-                  <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                  <select class="select2" id="company" name="company[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
-                  </select>
-                  </div>
-                  <div class="form-group" id="address_this">
-                      <label for="address">Address</label>
-                      <input type="text" class="form-control" id="address" name="address" placeholder="Address">
+                      <label for="name">Name</label>
+                      <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                  </div>  
+                  <div class="form-group" id="supplier_this">
+                    <label>Supplier</label>
+                    <a href="{{ route('supplier.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                    <select class="select2" id="supplier" name="supplier[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <div class="form-group" id="email_this">
-                      <label for="email">Email Address</label>
-                      <input type="text" class="form-control" id="email" name="email" placeholder="Email Address">
-                  </div>
-                  <div class="form-group" id="tel_no_this">
-                      <label for="tel_no">Telephone No.</label>
-                      <input type="text" class="form-control" id="tel_no" name="tel_no" placeholder="Telephone No">
-                  </div>
-                  <div class="form-group" id="mobile_no_this">
-                      <label for="mobile_no">Mobile No.</label>
-                      <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No">
-                  </div>
-                  <div class="form-group" id="photo_this">
-                      <label for="photo">Image File</label>
-                      <div class="input-group">
-                              <input type="file" id="photo" name="photo">
+                  <div class="row">
+                <div class="col-md-6">
+                      <div class="form-group" id="weight_this">
+                          <label for="name">Weight</label>
+                          <input type="number" class="form-control" id="weight" name="weight" placeholder="Weight">
                       </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="weight_uom_this">
+                          <label for="name">UOM <small>(Weight)</small></label>
+                          <input type="text" class="form-control" id="weight_uom" name="weight_uom" placeholder="unit">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="low_stock_this">
+                          <label for="name">Low Stock <small>(Alert Qty)</small></label>
+                          <input type="number" class="form-control" id="low_stock" name="low_stock" placeholder="Qty">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="item_uom_this">
+                      <label>UOM <small>(Item)</small></label>
+                        <select class="select2" id="item_uom" name="item_uom" data-placeholder="Select a State" style="width: 100%;">
+                          <option value="BAG">Bag - BAG</option>
+                          <option value="BND">Bucket - BND</option>
+                          <option value="BOWL">Bowl - BOWL</option>
+                          <option value="CRD">Card</option>
+                          <option value="CS">Centimeters</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group" id="category_id_this">
+                    <label>Category</label>
+                    <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a State" style="width: 100%;">
+                    </select>
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <div class="form-group">
-                      <label>Details</label>
-                      <textarea class="form-control" id="details" name="details" rows="5" placeholder="Details..."></textarea>
-                  </div>
-                  <div class="form-group">
-                      <label>Remarks</label>
-                      <textarea class="form-control" id="remarks" name="remarks" rows="4" placeholder="Remarks..."></textarea>
-                  </div>
+                    <div class="form-group">
+                          <label>Description</label>
+                          <textarea class="form-control" id="details" name="details" rows="5" placeholder="Details..."></textarea>
+                    </div>
+                    <div class="form-group" id="photo_this">
+                          <label for="photo">Image File</label>
+                          <div class="input-group">
+                                  <input type="file" id="photo" name="photo">
+                          </div>
+                    </div>
                 </div>
-                <!-- /.col -->
-              </div>
+                </div>
               <!-- /.row -->
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-              <a href="{{ route('supplier.index') }}" class="btn btn-primary">Back</a>
+              <a href="{{ route('item.index') }}" class="btn btn-primary">Back</a>
               <button type="submit" class="btn btn-primary">Submit</button>
               <button id="clear" class="btn btn-primary">Clear</button>
             </div>

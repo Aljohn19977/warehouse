@@ -29,7 +29,7 @@ Route::get('/item/get_item_id', 'ItemController@get_item_id')->name('item.get_it
 // Route::get('/supplier/{id}', 'SupplierController@show')->name('supplier.view');
 // Route::get('/supplier/api/show/{id}', 'SupplierController@api_show_info')->name('supplier.api_view');
 // Route::get('/supplier/api/selected_company/{id}', 'SupplierController@api_selected_company')->name('supplier.api_selected_company');
-// Route::get('/supplier/api/company/list','SupplierController@api_company_list')->name('supplier.api_company_list');
+Route::get('/supplier/api/supplier/list','ItemController@api_supplier_list')->name('item.api_supplier_list');
 
 // Route::post('/supplier/api/upload/photo/{id}', 'SupplierController@api_upload_photo')->name('supplier.api_upload_photo');
 // Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
