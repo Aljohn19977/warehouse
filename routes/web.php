@@ -37,8 +37,15 @@ Route::get('/supplier/api/supplier/list','ItemController@api_supplier_list')->na
 // Route::post('/supplier/apiGetAllSupplier', 'SupplierController@apiGetAllSupplier')->name('company.apiGetAllSupplier');
 
 
+Route::get('/uom', 'UOMController@index')->name('uom.index');
+Route::get('/uom/api/weight_uom/list','UOMController@weight_uom_list')->name('uom.api_weight_uom_list');
+Route::get('/uom/api/item_uom/list','UOMController@item_uom_list')->name('uom.api_item_uom_list');
 
 
+Route::post('/uom/item_uom/store', 'UOMController@store_item_uom')->name('uom.store_item_uom');
+Route::post('/uom/weight_uom/store', 'UOMController@store_weight_uom')->name('uom.store_weight_uom');
+Route::post('/uom/item_uom/delete', 'UOMController@destroy_item_uom')->name('uom.destroy_item_uom');
+Route::post('/uom/weight_uom/delete', 'UOMController@destroy_weight_uom')->name('uom.destroy_weight_uom');
 
 
 Route::get('/supplier', 'SupplierController@index')->name('supplier.index');

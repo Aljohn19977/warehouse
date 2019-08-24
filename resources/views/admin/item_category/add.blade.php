@@ -5,10 +5,12 @@
 @endsection
 
 @section('script')
+
 <script>
 $(document).ready(function(){
-  
-  get_company_id();
+
+
+  get_warehouse_id();
 
   $.ajaxSetup({
     headers: {
@@ -23,18 +25,19 @@ $(document).ready(function(){
       timer: 3000
   });
 
-  function get_company_id(){
+  function get_warehouse_id(){
     $.ajax({
         type: 'get',
-        url: "{{ route('company.get_company_id') }}",
+        url: "{{ route('warehouse.get_warehouse_id') }}",
         success: function(data) {
-           $('#company_id').val(data.company_id);
+           $('#warehouse_id').val(data.warehouse_id);
         },
         error: function(error){
           console.log('error');
         }
      }); 
   }
+
 
   function clear_fields(){
       $('#name').val('');
@@ -57,16 +60,17 @@ $(document).ready(function(){
     clear_fields();
   });
 
-  $('#add_company').on('submit',function(event){
+  $('#add_warehouse').on('submit',function(event){
 
       event.preventDefault();
       Pace.restart();
       var formData = new FormData(this);
-      formData.append( 'company_id', $('#company_id').val() );
+      
+      formData.append( 'warehouse_id', $('#warehouse_id').val());
 
         Pace.track(function () {
                   $.ajax({
-                        url: "{{ route('company.store') }}",
+                        url: "{{ route('warehouse.store') }}",
                         type: "post",
                         data:formData,
                         cache:false,
@@ -75,7 +79,7 @@ $(document).ready(function(){
                         dataType: 'JSON',
                         success: function(data) {
                           clearError();
-                          get_company_id();
+                          get_warehouse_id();
                           clear_fields();
                           Toast.fire({
                             type: 'success',
@@ -88,7 +92,7 @@ $(document).ready(function(){
                             title: 'Invalid Inputs.'
                           })
                           clearError();
-                            $.each(error.responseJSON.errors, function(key, value){                         
+                         $.each(error.responseJSON.errors, function(key, value){                         
                                   $("input[id="+key+"]").addClass("is-invalid");
                                   $("#"+key+"_this").append("<span class='help-block' style='color:red;'>"+value+"</span>");
                             });
@@ -120,13 +124,13 @@ $(document).ready(function(){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Company</h1>
+            <h1>Warehouse</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Company</li>
-              <li class="breadcrumb-item active">Add Company</li>
+              <li class="breadcrumb-item active">Warehouse</li>
+              <li class="breadcrumb-item active">Add Warehouse</li>
             </ol>
           </div>
         </div>
@@ -138,16 +142,16 @@ $(document).ready(function(){
       <div class="container-fluid">
         <div class="card card-default">
           <div class="card-header">
-            <h3 class="card-title">Add Company</h3>
+            <h3 class="card-title">Add Warehouse</h3>
           </div>
           <!-- /.card-header -->
-          <form role="form" method="post" id="add_company" enctype="multipart/form-data">
+          <form role="form" method="post" id="add_warehouse" enctype="multipart/form-data">
             <div class="card-body">
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
-                      <label for="company_id">Company ID</label>
-                      <input type="text" class="form-control" id="company_id" name="company_id" disabled>
+                      <label for="warehouse_id">Warehouse ID</label>
+                      <input type="text" class="form-control" id="warehouse_id" name="warehouse_id" disabled>
                   </div>
                   <div class="form-group" id="name_this">
                       <label for="name">Name</label>
@@ -194,7 +198,7 @@ $(document).ready(function(){
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-              <a href="{{ route('company.index') }}" class="btn btn-primary">Back</a>
+              <a href="{{ route('warehouse.index') }}" class="btn btn-primary">Back</a>
               <button type="submit" class="btn btn-primary">Submit</button>
               <button id="clear" class="btn btn-primary">Clear</button>
             </div>
