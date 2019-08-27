@@ -13,12 +13,14 @@
 $(document).ready(function(){
 
 
-      $('.select2').select2();
-      get_supplier_id();
-
-
+  $('.select2').select2();
+          
+  get_item_id();
   get_supplier_list();
-  // get_supplier_id();
+  get_category_list();
+  get_item_uom_list();
+  get_weight_uom_list();
+  // get_supplier_id();;
 
   $.ajaxSetup({
     headers: {
@@ -33,7 +35,7 @@ $(document).ready(function(){
       timer: 3000
   });
 
-  function get_supplier_id(){
+  function get_item_id(){
     $.ajax({
         type: 'get',
         url: "{{ route('item.get_item_id') }}",
@@ -53,8 +55,67 @@ $(document).ready(function(){
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
-            $("#supplier").append('<option value="'+row.id+'">'+row.name+'</option>');
+            var newOption = new Option(row.name, row.id, false, false);
+            $('#supplier').append(newOption).trigger('change');
         })
+        $('.select2').select2().val(null).trigger("change");
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+  }
+
+  function get_category_list(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('category.api_categoy_list') }}",
+        success: function(data) {
+
+        JSON.parse(data).data.forEach(row => {
+            var newOption = new Option(row.name, row.id, false, false);
+            $('#category_id').append(newOption).trigger('change');
+        })
+        $('.select2').select2().val(null).trigger("change");
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+  }
+
+  function get_weight_uom_list(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('uom.api_weight_uom_list') }}",
+        success: function(data) {
+
+        JSON.parse(data).data.forEach(row => {
+            var newOption = new Option(row.name, row.id, false, false);
+            $('#weight_uom').append(newOption).trigger('change');
+        })
+
+       $('.select2').select2().val(null).trigger("change");
+
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+  }
+
+  function get_item_uom_list(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('uom.api_item_uom_list') }}",
+        success: function(data) {
+
+        JSON.parse(data).data.forEach(row => {
+            var newOption = new Option(row.name, row.id, false, false);
+            $('#item_uom').append(newOption).trigger('change');
+        })
+        
+        $('.select2').select2().val(null).trigger("change");
 
         },
         error: function(error){
@@ -64,15 +125,12 @@ $(document).ready(function(){
   }
 
   function clear_fields(){
-      $('#fullname').val('');
-      $('#address').val('');
-      $('#email').val('');
-      $("#tel_no").val('');
-      $("#mobile_no").val('');
+      $('#name').val('');
+      $('#weight').val('');
+      $('#low_stock').val('');
       $("#photo").val('');
-      $("#details").val('');
-      $("#remarks").val('');
-      $company_multi_select.val(null).trigger("change");
+      $("#description").val('');
+      $('.select2').select2().val(null).trigger("change");
   }
 
   function clearError(){
@@ -85,17 +143,17 @@ $(document).ready(function(){
     clear_fields();
   });
 
-  $('#add_supplier').on('submit',function(event){
+  $('#add_item').on('submit',function(event){
 
       event.preventDefault();
       Pace.restart();
       var formData = new FormData(this);
       
-      formData.append( 'supplier_id', $('#supplier_id').val());
+      formData.append( 'item_id', $('#item_id').val());
 
         Pace.track(function () {
                   $.ajax({
-                        url: "{{ route('supplier.store') }}",
+                        url: "{{ route('item.store') }}",
                         type: "post",
                         data:formData,
                         cache:false,
@@ -104,7 +162,7 @@ $(document).ready(function(){
                         dataType: 'JSON',
                         success: function(data) {
                           clearError();
-                          get_supplier_id();
+                          get_item_id();
                           clear_fields();
                           Toast.fire({
                             type: 'success',
@@ -170,7 +228,7 @@ $(document).ready(function(){
             <h3 class="card-title">Add Item</h3>
           </div>
           <!-- /.card-header -->
-          <form role="form" method="post" id="add_supplier" enctype="multipart/form-data">
+          <form role="form" method="post" id="add_item" enctype="multipart/form-data">
             <div class="card-body">
               <div class="row">
                 <div class="col-md-4">
@@ -185,7 +243,7 @@ $(document).ready(function(){
                   <div class="form-group" id="supplier_this">
                     <label>Supplier</label>
                     <a href="{{ route('supplier.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="supplier" name="supplier[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                    <select class="select2" id="supplier" name="supplier[]" multiple="multiple" data-placeholder="Select a Supplier" style="width: 100%;">
                     </select>
                   </div>
                 </div>
@@ -198,9 +256,11 @@ $(document).ready(function(){
                       </div>
                     </div>
                     <div class="col-md-6">
-                      <div class="form-group" id="weight_uom_this">
-                          <label for="name">UOM <small>(Weight)</small></label>
-                          <input type="text" class="form-control" id="weight_uom" name="weight_uom" placeholder="unit">
+                    <div class="form-group" id="weight_uom_this">
+                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>  
+                        <label>UOM <small>(Weight)</small></label>
+                          <select class="select2" id="weight_uom" name="weight_uom" data-placeholder="UOM" style="width: 100%;">
+                          </select>
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -211,28 +271,24 @@ $(document).ready(function(){
                     </div>
                     <div class="col-md-6">
                       <div class="form-group" id="item_uom_this">
-                      <label>UOM <small>(Item)</small></label>
-                        <select class="select2" id="item_uom" name="item_uom" data-placeholder="Select a State" style="width: 100%;">
-                          <option value="BAG">Bag - BAG</option>
-                          <option value="BND">Bucket - BND</option>
-                          <option value="BOWL">Bowl - BOWL</option>
-                          <option value="CRD">Card</option>
-                          <option value="CS">Centimeters</option>
-                        </select>
+                      <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                        <label>UOM <small>(Item)</small></label>
+                          <select class="select2" id="item_uom" name="item_uom" data-placeholder="UOM" style="width: 100%;">
+                          </select>
                       </div>
                     </div>
                   </div>
                   <div class="form-group" id="category_id_this">
                     <label>Category</label>
-                    <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a State" style="width: 100%;">
+                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
                     </select>
                   </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                           <label>Description</label>
-                          <textarea class="form-control" id="details" name="details" rows="5" placeholder="Details..."></textarea>
+                          <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details..."></textarea>
                     </div>
                     <div class="form-group" id="photo_this">
                           <label for="photo">Image File</label>
@@ -241,7 +297,7 @@ $(document).ready(function(){
                           </div>
                     </div>
                 </div>
-                </div>
+              </div>
               <!-- /.row -->
             </div>
             <!-- /.card-body -->

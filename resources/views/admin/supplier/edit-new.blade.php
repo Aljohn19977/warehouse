@@ -19,15 +19,10 @@ $.ajaxSetup({
   }
 });
 
-$('.select2').select2();
+var $company_multi_select = $('.select2').select2();
 
 
-get_supplier_list();
-get_category_list();
-get_weight_uom_list();
-get_item_uom_list();
-
-
+get_company_list();
 
 
 const Toast = Swal.mixin({
@@ -41,7 +36,7 @@ function api_supplier_info(){
 
   $.ajax({
         type: 'get',
-        url: "{{ route('supplier.api_view',['id' => $items->id ]) }}",
+        url: "{{ route('supplier.api_view',['id' => $suppliers->id ]) }}",
         success: function(data) {
           $("#box_photo").attr("src","/"+data.photo);
            $.each(data, function(key, value){                         
@@ -54,131 +49,48 @@ function api_supplier_info(){
      }); 
 }
 
-  function get_supplier_list(){
+function get_company_list(){
     $.ajax({
         type: 'get',
-        url: "{{ route('item.api_supplier_list') }}",
+        url: "{{ route('supplier.api_company_list') }}",
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
-            $('#supplier').append(newOption).trigger('change');
+            $("#company").append('<option value="'+row.id+'">'+row.name+'</option>');
         })
-        api_selected_supplier();
+
+        api_selected_company();
+
         },
         error: function(error){
           console.log('error');
         }
      }); 
-  }
 
-    function get_category_list(){
-    $.ajax({
-        type: 'get',
-        url: "{{ route('category.api_categoy_list') }}",
-        success: function(data) {
+}
 
-        JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
-            $('#category_id').append(newOption).trigger('change');
-        })
-        
-        },
-        error: function(error){
-          console.log('error');
-        }
-     }); 
-  }
-
-  function get_weight_uom_list(){
-    $.ajax({
-        type: 'get',
-        url: "{{ route('uom.api_weight_uom_list') }}",
-        success: function(data) {
-
-        JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
-            $('#weight_uom').append(newOption).trigger('change');
-        })
-        api_selected_weight_uom();
-        },
-        error: function(error){
-          console.log('error');
-        }
-     }); 
-  }
-
-  function get_item_uom_list(){
-    $.ajax({
-        type: 'get',
-        url: "{{ route('uom.api_item_uom_list') }}",
-        success: function(data) {
-
-        JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
-            $('#item_uom').append(newOption).trigger('change');
-        })
-        api_selected_item_uom();
-        },
-        error: function(error){
-          console.log('error');
-        }
-     }); 
-  }
-
-function api_selected_supplier(){
+function api_selected_company(){
 
     $.ajax({
         type: 'get',
         dataType: 'JSON',
-        url: "{{ route('item.api_selected_supplier',['id' => $items->id ]) }}",
+        url: "{{ route('supplier.api_selected_company',['id' => $suppliers->id ]) }}",
         success: function(data) {
-          
-            var selected = data.data;
-            $('#supplier').val(selected).trigger("change");
+
+            var test = data.data;
+
+            $company_multi_select.val(test).trigger("change");
+
         },
         error: function(error){
           console.log('error');
         }
      }); 
 
-}
-
-function api_selected_weight_uom(){
-
-$.ajax({
-    type: 'get',
-    dataType: 'JSON',
-    url: "{{ route('item.api_selected_weight_uom',['id' => $items->id ]) }}",
-    success: function(data) {
-      
-        var selected = data.data;
-        $('#weight_uom').val(selected).trigger("change");
-    },
-    error: function(error){
-      console.log('error');
-    }
- }); 
+       
 
 }
 
-function api_selected_item_uom(){
-
-$.ajax({
-    type: 'get',
-    dataType: 'JSON',
-    url: "{{ route('item.api_selected_item_uom',['id' => $items->id ]) }}",
-    success: function(data) {
-      
-        var selected = data.data;
-        $('#item_uom').val(selected).trigger("change");
-    },
-    error: function(error){
-      console.log('error');
-    }
- }); 
-
-}
 
 
 function clearError(){
@@ -192,7 +104,7 @@ $('#reset').click(function(event){
   Pace.track(function () {
   $.ajax({
         type: 'get',
-        url: "{{ route('supplier.api_view',['id' => $items->id ]) }}",
+        url: "{{ route('supplier.api_view',['id' => $suppliers->id ]) }}",
         success: function(data) {
            $.each(data, function(key, value){                         
               $('#'+key+'').val(value);
@@ -234,12 +146,12 @@ $('#change_photo').click(function(event){
               Pace.track(function () {
               $.ajax({
                   method: 'post',
-                  url: "{{ route('item.api_upload_photo',['id' => $items->id ]) }}",
+                  url: "{{ route('supplier.api_upload_photo',['id' => $suppliers->id ]) }}",
                   data: formData,
                   processData: false,
                   contentType: false,
                   success: function (data) {
-                    $("#box_photo").attr("src","/"+data.data);
+                    api_supplier_info();
                     Toast.fire({
                             type: 'success',
                             title: name+' Successfully Change.'
@@ -258,15 +170,15 @@ $('#change_photo').click(function(event){
     })
 });
 
-$('#update_item').on('submit',function(event){
+$('#update_supplier').on('submit',function(event){
 
     event.preventDefault();
     Pace.restart();
     var formData = new FormData(this);
-    
+    formData.append( 'supplier_id', $('#supplier_id').val());
       Pace.track(function () {
                 $.ajax({
-                      url: "{{ route('item.update',['id' => $items->id ]) }}",
+                      url: "{{ route('supplier.update',['id' => $suppliers->id ]) }}",
                       type: "post",
                       data:formData,
                       cache:false,
@@ -275,7 +187,7 @@ $('#update_item').on('submit',function(event){
                       dataType: 'JSON',
                       success: function(data) {
                         clearError();
-                        // api_supplier_info();
+                        api_supplier_info();
                         Toast.fire({
                           type: 'success',
                           title: name+' Successfully Updated.'
@@ -338,61 +250,47 @@ $('#update_item').on('submit',function(event){
             <h3 class="card-title">Edit Item</h3>
           </div>
           <!-- /.card-header -->
-          <form role="form" method="post" id="update_item" enctype="multipart/form-data">
+          <form role="form" method="post" id="update_supplier" enctype="multipart/form-data">
             <div class="card-body">
-              <div class="row">
+            <div class="row">
                 <div class="col-md-4">
-                <div class="form-group" id="item_id_this">
-                      <label for="name">Item ID</label>
-                      <input type="text" class="form-control" id="item_id" name="item_id" value="{{ $items->item_id }}" disabled>
-                  </div>  
-                  <div class="form-group" id="name_this">
-                      <label for="name">Name</label>
-                      <input type="text" class="form-control" id="name" name="name" value="{{ $items->name }}"  placeholder="Name">
-                  </div>  
-                  <div class="form-group" id="supplier_this">
-                    <label>Supplier</label>
-                    <a href="{{ route('supplier.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="supplier" name="supplier[]" multiple="multiple" data-placeholder="Select a Supplier" style="width: 100%;">
-                    </select>
+                  <div class="form-group">
+                      <label for="company_id">Supplier ID</label>
+                      <input type="text" class="form-control" id="supplier_id" name="supplier_id" value="{{ $suppliers->supplier_id }}" disabled>
+                  </div>
+                  <div class="form-group">
+                      <label for="name">Full Name</label>
+                      <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name" value="{{ $suppliers->fullname }}">
+                  </div>
+                  <div class="form-group" id="company_id_this">
+                  <label>Company</label>
+                  <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                  <select class="select2" id="company" name="company_id" data-placeholder="Select a State" style="width: 100%;">
+                  </select>
                   </div>
                 </div>
                 <div class="col-md-4">
+                  <div class="form-group">
+                      <label for="email">Email Address</label>
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" value="{{ $suppliers->email }}">
+                  </div>
                   <div class="row">
-                <div class="col-md-6">
-                      <div class="form-group" id="weight_this">
-                          <label for="name">Weight</label>
-                          <input type="number" class="form-control" id="weight" name="weight" placeholder="Weight" value="{{ $items->weight }}" >
+                    <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="tel_no">Telephone No.</label>
+                          <input type="text" class="form-control" id="tel_no" name="tel_no" placeholder="Telephone No" value="{{ $suppliers->tel_no }}">
                       </div>
                     </div>
                     <div class="col-md-6">
-                    <div class="form-group" id="weight_uom_this">
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>  
-                        <label>UOM <small>(Weight)</small></label>
-                          <select class="select2" id="weight_uom" name="weight_uom" data-placeholder="UOM" style="width: 100%;">
-                          </select>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group" id="low_stock_this">
-                          <label for="name">Low Stock <small>(Alert Qty)</small></label>
-                          <input type="number" class="form-control" id="low_stock" name="low_stock" placeholder="Qty" value="{{ $items->low_stock }}" >
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group" id="item_uom_this">
-                      <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                        <label>UOM <small>(Item)</small></label>
-                          <select class="select2" id="item_uom" name="item_uom" data-placeholder="UOM" style="width: 100%;">
-                          </select>
+                      <div class="form-group">
+                          <label for="mobile_no">Mobile No.</label>
+                          <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Mobile No" value="{{ $suppliers->mobile_no }}">
                       </div>
                     </div>
                   </div>
-                  <div class="form-group" id="category_id_this">
-                    <label>Category</label>
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
-                    </select>
+                  <div class="form-group">
+                      <label for="address">Address</label>
+                      <input type="text" class="form-control" id="address" name="address" placeholder="Address" value="{{ $suppliers->address }}">
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -402,7 +300,7 @@ $('#update_item').on('submit',function(event){
                         <div class="row" style="margin-bottom:20px;">
                         <div class="col-md-12">
                         <img class="profile-user-img img-fluid"
-                            src="{{ asset($items->photo) }}"
+                            src="{{ asset($suppliers->photo) }}"
                             alt="User profile picture" id="box_photo" style="margin-bottom:10px;">
                         </div>
                         <div class="col-md-12">
@@ -413,20 +311,29 @@ $('#update_item').on('submit',function(event){
                       </div>
                     </div>
                 </div>
+                <!-- /.col -->
               </div>
-              <div class="col-lg-12">
-              <div class="form-group">
-                          <label>Description</label>
-                          <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details...">{{ $items->description }}</textarea>
-                    </div>
+              <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                      <label>Details</label>
+                      <textarea class="form-control" id="details" name="details" rows="2" placeholder="Details...">{{ $suppliers->details }}</textarea>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                      <label>Remarks</label>
+                      <textarea class="form-control" id="remarks" name="remarks" rows="2" placeholder="Remarks...">{{ $suppliers->remarks }}</textarea>
+                </div>
+              </div>
               </div>
               <!-- /.row -->
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-            <button id="update" class="btn btn-primary">Update</button>
+              <button id="update" class="btn btn-primary">Update</button>
               <button id="reset" class="btn btn-primary">Reset</button>
-              <a href="{{ route('item.index') }}" class="btn btn-primary">Back</a>
+              <a href="{{ route('supplier.index') }}" class="btn btn-primary">Back</a>
             </div>
           </form>
           </div>

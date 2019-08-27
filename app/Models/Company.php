@@ -23,4 +23,8 @@ class Company extends Model
     public function supplier(){
         return $this->belongsToMany('App\Models\Supplier');
     }
+
+    public function item(){
+        return $this->hasMany('App\Models\Item_Category');
+    }
 }

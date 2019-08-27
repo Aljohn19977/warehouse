@@ -13,4 +13,8 @@ class Weight_UOM extends Model
         'acronym',
         'name'
     ];
+
+    public function item(){
+        return $this->hasOne('App\Models\Item');
+    }
 }

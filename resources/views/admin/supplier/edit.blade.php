@@ -174,8 +174,7 @@ $('#update_supplier').on('submit',function(event){
     event.preventDefault();
     Pace.restart();
     var formData = new FormData(this);
-    formData.append( 'supplier_id', $('#supplier_id').val() );
-
+    formData.append( 'supplier_id', $('#supplier_id').val());
       Pace.track(function () {
                 $.ajax({
                       url: "{{ route('supplier.update',['id' => $suppliers->id ]) }}",
@@ -314,10 +313,10 @@ $('#update_supplier').on('submit',function(event){
                       <label for="name">Full Name</label>
                       <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name" value="{{ $suppliers->fullname }}">
                   </div>
-                  <div class="form-group" id="company_this">
+                  <div class="form-group" id="company_id_this">
                   <label>Company</label>
                   <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                  <select class="select2" id="company" name="company[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                  <select class="select2" id="company" name="company_id" data-placeholder="Select a State" style="width: 100%;">
                   </select>
                   </div>
                   <div class="form-group">
@@ -373,5 +372,5 @@ $('#update_supplier').on('submit',function(event){
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-  </div>
+</div>
 @endsection

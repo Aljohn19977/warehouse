@@ -87,53 +87,25 @@ $('#example2').DataTable();
               <div class="card-header p-2">
               <a href="{{ route('supplier.index') }}" class="btn btn-danger float-right"><i class="nav-icon fas fa-long-arrow-alt-left" style="color:white; margin-right:10px;"></i>Back</a>
                 <ul class="nav nav-pills">
-                  <li class="nav-item"><a class="nav-link active" href="#companies" data-toggle="tab">Companies</a></li>
                   <li class="nav-item"><a class="nav-link" href="#items" data-toggle="tab">Items</a></li>
-                  <li class="nav-item"><a class="nav-link" href="#info" data-toggle="tab"><i class="fas fa-info mr-1"></i>Info</a></li>
+                  <li class="nav-item"><a class="active nav-link" href="#info" data-toggle="tab"><i class="fas fa-info mr-1"></i>Info</a></li>
                 </ul>
               </div><!-- /.card-header -->
               <div class="card-body">
                 <div class="tab-content">
-                  <div class="active tab-pane" id="companies">
-                  <table id="example2" class="table table-bordered table-hover">
-                    <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Photo</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach( $suppliers->company as $company )
-                    <tr>
-                      <td>{{ $company->company_id }}</td>
-                      <td><div class="text-center"> <img class="img-fluid img-circle"
-                          src="{{ asset($company->photo) }}" style="max-width:50px;"
-                          alt="User profile picture"> </div></td>
-                      <td>{{ $company->name }}</td>
-                      <td>{{ $company->email }}</td>
-                      <td>
-                          <a class="btn btn-success" href="/company/{{ $company->id }}" style="color:white;"><i class="fas fa-eye"></i></a></td>
-                      </tr>
-                    @endforeach
-                    </tbody>
-                  </table>
-                  </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="items">
 
                   </div>
                   <!-- /.tab-pane -->
 
-                  <div class="tab-pane" id="info">
+                  <div class="active tab-pane" id="info">
                     <form class="form-horizontal" role="form" method="post" id="update_company">
             <div class="card-body">
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
-                      <label for="company_id">Company ID</label>
+                      <label for="company_id">Supplier ID</label>
                       <input type="text" class="form-control" id="company_id" name="company_id" value="{{ $suppliers->supplier_id }}" disabled>
                   </div>
                   <div class="form-group">

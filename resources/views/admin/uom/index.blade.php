@@ -24,6 +24,7 @@ $(document).ready(function(){
 
   get_uom_weight_list();
   get_uom_item_list();
+  get_category_list();
 
   $.ajaxSetup({
     headers: {
@@ -37,6 +38,27 @@ $(document).ready(function(){
       showConfirmButton: false,
       timer: 3000
   });
+
+  
+  function get_category_list(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('category.api_categoy_list') }}",
+        success: function(data) {
+          
+        $('#item_category').empty();
+
+        JSON.parse(data).data.forEach(row => {
+            var newOption = new Option(row.name, row.id, true, true);
+             $('#item_category').append(newOption).trigger('change');
+        })
+
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+  }
 
 
   function get_uom_weight_list(){
@@ -78,6 +100,57 @@ $(document).ready(function(){
         }
      }); 
   }
+
+  $('#add_item_category').on('click',function(event){
+    
+	
+    Swal.fire({
+         title: 'Add Item Category',
+         html:
+          '<input id="category_name" class="swal2-input" placeholder="Input Name">',
+        focusConfirm: false,
+        preConfirm: () => {
+          // alert($('#swal-input1').val() + $('#swal-input2').val());
+          // // $("#uom_weight").append('<option value="asdasd">asdasd</option>');
+          var category_name = $('#category_name').val();
+
+          // uom.store_weight_uom
+
+          // var newOption = new Option(text+'-'+acronym, acronym, true, true);
+
+          // $('#uom_weight').append(newOption).trigger('change');
+
+          // $("#uom_weight option[value="+acronym+"]").remove();
+          
+      
+                   $.ajax({
+                        url: "{{ route('category.store_category') }}",
+                        type: "post",
+                        data:  {
+                          'category_name' : category_name,
+                        },
+                        dataType: 'JSON',
+                        success: function(data) {
+                            Toast.fire({
+                              type: 'success',
+                              title: name+' Successfully Added.'
+                            })
+                            get_category_list();
+
+                        },
+                        error: function(error){
+                          Toast.fire({
+                            type: 'error',
+                            title: 'Invalid Inputs.'
+                          })
+                        }
+                  });         
+        }
+    })
+
+
+
+ }); 
 
   $('#add_uom_weight').on('click',function(event){
     
@@ -246,6 +319,35 @@ $(document).ready(function(){
                   });   
   });
 
+      $('#item_category').on('select2:unselect', function (e) {
+      var data = e.params.data;
+      var id = data.id;
+                       $.ajax({
+                        url: "{{ route('category.destroy_category') }}",
+                        type: "post",
+                        data:  {
+                          'id' : id,
+                        },
+                        dataType: 'JSON',
+                        success: function(data) {
+                          $('#uom_item').select2('close');
+                            Toast.fire({
+                              type: 'success',
+                              title:' Deleted.'
+                            })
+                            $("#item_category option[value="+id+"]").remove();
+                            get_uom_item_list();
+
+                        },
+                        error: function(error){
+                          Toast.fire({
+                            type: 'error',
+                            title: 'Invalid Inputs.'
+                          })
+                        }
+                  });   
+  });
+
 
 });
 
@@ -297,6 +399,12 @@ $(document).ready(function(){
                   <label>UOM Weight</label>
                   <button id="add_uom_weight" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></button>
                   <select class="select2" id="uom_weight" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                  </select>
+                  </div>
+                  <div class="form-group" id="company_this">
+                  <label>Item Category</label>
+                  <button id="add_item_category" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></button>
+                  <select class="select2" id="item_category" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
                   </select>
                   </div>
                 </div>

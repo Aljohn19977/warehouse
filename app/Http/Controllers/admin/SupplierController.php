@@ -56,19 +56,10 @@ class SupplierController extends Controller
 
         $suppliers = Supplier::findOrFail($id);
 
-        $selected_company = $suppliers->company;
-
-        $selected = array();
-
-
-        foreach($selected_company as $value) {
-
-            array_push($selected,$value->id);
-
-        }
+        $selected_company = $suppliers->company_id;        
 
         $json_data = array(
-            "data" => $selected,  
+            "data" => $selected_company,  
           );
 
 
@@ -93,10 +84,10 @@ class SupplierController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        
+    {    
         $this->validate($request,[
             'supplier_id' => 'required|max:255',
+            'company_id' => 'required|max:255',
             'fullname' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
@@ -105,7 +96,6 @@ class SupplierController extends Controller
             'details' => 'max:255',
             'remarks' => 'max:255',
             'photo' => 'image|max:5000',
-            'company' => 'required',
         ]);
 
         $filePath = null;
@@ -121,6 +111,7 @@ class SupplierController extends Controller
 
         $supplier = new Supplier;
         $supplier->supplier_id = $request->supplier_id;
+        $supplier->company_id = $request->company_id;
         $supplier->fullname = $request->fullname;
         $supplier->address = $request->address;
         $supplier->email = $request->email;
@@ -129,13 +120,7 @@ class SupplierController extends Controller
         $supplier->photo = $filePath;
         $supplier->details = $request->details;
         $supplier->remarks = $request->remarks;
-        $supplier->save();
-
-
-                  
-        $supplier->company()->sync($request->company);
- 
-        
+        $supplier->save();        
 
         return response()->json(['success'=>'Success']);
 
@@ -204,7 +189,7 @@ class SupplierController extends Controller
     {
         $suppliers = Supplier::findOrFail($id);
 
-        return view('admin.supplier.edit',compact('suppliers'));
+        return view('admin.supplier.edit-new',compact('suppliers'));
     }
 
     /**
@@ -219,6 +204,7 @@ class SupplierController extends Controller
 
         $this->validate($request,[
             'supplier_id' => 'required|max:255',
+            'company_id' => 'required|max:255',
             'fullname' => 'required|max:255',
             'address' => 'required',
             'email' => 'required|email|max:255',
@@ -227,12 +213,12 @@ class SupplierController extends Controller
             'details' => 'max:255',
             'remarks' => 'max:255',
             'photo' => 'image|max:5000',
-            'company' => 'required',
         ]);
 
 
         $supplier = Supplier::findOrfail($id);
         $supplier->supplier_id = $request->supplier_id;
+        $supplier->company_id = $request->company_id;
         $supplier->fullname = $request->fullname;
         $supplier->address = $request->address;
         $supplier->email = $request->email;
@@ -241,11 +227,7 @@ class SupplierController extends Controller
         $supplier->details = $request->details;
         $supplier->remarks = $request->remarks;
         $supplier->update();
-
                    
-           $supplier->company()->sync($request->company);
-        
-
         return response()->json(['success'=>'Success']);
     }
 

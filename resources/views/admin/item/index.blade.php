@@ -29,15 +29,15 @@ $('#example2').DataTable({
               ordering: true,
               autoWidth: true,
              ajax: {
-                    'url' : "{{ route('company.apiGetAllSupplier')}}",
+                    'url' : "{{ route('item.apiGetAllItem')}}",
                     'dataType' : 'json',
                     'type' : 'post',
              },
                columns : [
-                          {"data" : "supplier_id"},
+                          {"data" : "item_id"},
                           {"data" : "photo"},
-                          {"data" : "fullname"},
-                          {"data" : "email"},
+                          {"data" : "name"},
+                          {"data" : "category_id"},
                           {"data" : "action"}
                          ],
                           
@@ -64,12 +64,12 @@ $('#example2').DataTable({
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Supplier</h1>
+            <h1>Item</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Supplier</li>
+              <li class="breadcrumb-item active">Item</li>
             </ol>
           </div>
         </div>
@@ -82,7 +82,7 @@ $('#example2').DataTable({
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Company List<a href="{{ route('item.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+              <h3 class="card-title">Item List<a href="{{ route('item.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
             </h3>
             </div>
             <!-- /.card-header -->
@@ -93,7 +93,7 @@ $('#example2').DataTable({
                   <th>ID</th>
                   <th>Photo</th>
                   <th>Name</th>
-                  <th>Email</th>
+                  <th>Category</th>
                   <th>Action</th>
                 </tr>
                 </thead>

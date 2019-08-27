@@ -9,7 +9,8 @@ class Supplier extends Model
     public $table = "suppliers";
 
     protected $fillable = [
-        'supplier_id', 
+        'supplier_id',
+        'company_id', 
         'name', 
         'address',
         'email',
@@ -22,7 +23,7 @@ class Supplier extends Model
 
     
     public function company(){
-        return $this->belongsToMany('App\Models\Company');
+        return $this->belongsTo('App\Models\Company');
     }
 
     public function item(){

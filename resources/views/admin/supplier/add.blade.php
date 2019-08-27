@@ -13,7 +13,7 @@
 $(document).ready(function(){
 
       //Initialize Select2 Elements
-      var $company_multi_select = $('.select2').select2();
+  $('.select2').select2();
       
 
   get_company_list();
@@ -52,9 +52,10 @@ $(document).ready(function(){
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
-            $("#company").append('<option value="'+row.id+'">'+row.name+'</option>');
+            var newOption = new Option(row.name, row.id, false, false);
+            $('#company').append(newOption).trigger('change');
         })
-
+        $('.select2').select2().val(null).trigger("change");
         },
         error: function(error){
           console.log('error');
@@ -71,7 +72,7 @@ $(document).ready(function(){
       $("#photo").val('');
       $("#details").val('');
       $("#remarks").val('');
-      $company_multi_select.val(null).trigger("change");
+      $('.select2').select2().val(null).trigger("change");
   }
 
   function clearError(){
@@ -181,10 +182,10 @@ $(document).ready(function(){
                       <label for="name">Full Name</label>
                       <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name">
                   </div>
-                  <div class="form-group" id="company_this">
+                  <div class="form-group" id="company_id_this">
                   <label>Company</label>
                   <a href="{{ route('company.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                  <select class="select2" id="company" name="company[]" multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                  <select class="select2" id="company" name="company_id" data-placeholder="Select a Company" style="width: 100%;">
                   </select>
                   </div>
                   <div class="form-group" id="address_this">

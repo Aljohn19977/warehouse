@@ -82,7 +82,7 @@ $('#example2').DataTable({
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Company List<a href="{{ route('supplier.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+              <h3 class="card-title">Supplier List<a href="{{ route('supplier.create' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
             </h3>
             </div>
             <!-- /.card-header -->

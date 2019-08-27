@@ -19,9 +19,9 @@ class CreateItemsTable extends Migration
             $table->integer('category_id');
             $table->string('name');
             $table->float('weight');
-            $table->string('weight_uom');
+            $table->integer('weight_uom_id');
             $table->integer('low_stock');
-            $table->string('item_uom');
+            $table->integer('item_uom_id');
             $table->string('description')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();

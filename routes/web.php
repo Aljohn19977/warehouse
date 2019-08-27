@@ -25,16 +25,23 @@ Route::get('/receiving', 'ReceivingController@index');
 Route::get('/item', 'ItemController@index')->name('item.index');
 Route::get('/item/create', 'ItemController@create')->name('item.create');
 Route::get('/item/get_item_id', 'ItemController@get_item_id')->name('item.get_item_id');
-// Route::get('/supplier/edit/{id}', 'SupplierController@edit');
-// Route::get('/supplier/{id}', 'SupplierController@show')->name('supplier.view');
+
+Route::get('/item/edit/{id}', 'ItemController@edit');
+Route::get('/item/{id}', 'ItemController@show')->name('supplier.view');
 // Route::get('/supplier/api/show/{id}', 'SupplierController@api_show_info')->name('supplier.api_view');
 // Route::get('/supplier/api/selected_company/{id}', 'SupplierController@api_selected_company')->name('supplier.api_selected_company');
 Route::get('/supplier/api/supplier/list','ItemController@api_supplier_list')->name('item.api_supplier_list');
-
+Route::get('/item/api/selected_supplier/{id}', 'ItemController@api_selected_supplier')->name('item.api_selected_supplier');
+Route::get('/item/api/selected_weight_uom/{id}', 'ItemController@api_selected_weight_uom')->name('item.api_selected_weight_uom');
+Route::get('/item/api/selected_item_uom/{id}', 'ItemController@api_selected_item_uom')->name('item.api_selected_item_uom');
+Route::get('/item/api/api_selected_item_setting/{id}', 'ItemController@api_selected_item_setting')->name('item.api_selected_item_setting');
+Route::post('/item/store', 'ItemController@store')->name('item.store');
+Route::post('/item/update/{id}', 'ItemController@update')->name('item.update');
 // Route::post('/supplier/api/upload/photo/{id}', 'SupplierController@api_upload_photo')->name('supplier.api_upload_photo');
 // Route::post('/supplier/store', 'SupplierController@store')->name('supplier.store');
 // Route::post('/supplier/update/{id}', 'SupplierController@update')->name('supplier.update');
-// Route::post('/supplier/apiGetAllSupplier', 'SupplierController@apiGetAllSupplier')->name('company.apiGetAllSupplier');
+Route::post('/item/api/upload/photo/{id}', 'ItemController@api_upload_photo')->name('item.api_upload_photo');
+Route::post('/item/apiGetAllItem', 'ItemController@apiGetAllItem')->name('item.apiGetAllItem');
 
 
 Route::get('/uom', 'UOMController@index')->name('uom.index');
@@ -47,6 +54,9 @@ Route::post('/uom/weight_uom/store', 'UOMController@store_weight_uom')->name('uo
 Route::post('/uom/item_uom/delete', 'UOMController@destroy_item_uom')->name('uom.destroy_item_uom');
 Route::post('/uom/weight_uom/delete', 'UOMController@destroy_weight_uom')->name('uom.destroy_weight_uom');
 
+Route::get('/category/api/list','ItemCategoryController@api_categoy_list')->name('category.api_categoy_list');
+Route::post('/category/store', 'ItemCategoryController@store_category')->name('category.store_category');
+Route::post('/category/delete', 'ItemCategoryController@destroy_category')->name('category.destroy_category');
 
 Route::get('/supplier', 'SupplierController@index')->name('supplier.index');
 Route::get('/supplier/create', 'SupplierController@create')->name('supplier.create');
