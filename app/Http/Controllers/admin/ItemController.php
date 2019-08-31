@@ -20,6 +20,21 @@ class ItemController extends Controller
         return view('admin.item.index');
     }
 
+    public function api_show_info($id)
+    {
+        $item = Item::findOrFail($id);
+
+        return response()->json([
+            'item_id'=> $item->item_id,
+            'unit_price'=> $item->unit_price,
+            'name'=> $item->name,
+            'low_stock'=> $item->low_stock,
+            'weight'=> $item->weight,
+            'description'=> $item->description,
+            ]);
+    }
+
+
     public function get_item_id()
     {
         $supplier_prefix = 'ITM';
@@ -94,6 +109,19 @@ class ItemController extends Controller
         return json_encode($json_data);
     }
 
+    public function api_selected_category($id)
+    {
+        $items = Item::findOrFail($id);
+
+        $selected_category = $items->category->id;  
+
+        $json_data = array(
+          "data" => $selected_category,  
+        );
+
+        return json_encode($json_data);
+    }
+
     public function api_selected_weight_uom($id)
     {
         $items = Item::findOrFail($id);
@@ -163,6 +191,7 @@ class ItemController extends Controller
        
         $this->validate($request,[
             'item_id' => 'required|max:255',
+            'unit_price' => 'required|min:0|max:255',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
             'low_stock' => 'required|integer|min:0|max:255',
@@ -188,6 +217,7 @@ class ItemController extends Controller
         $item = new Item;
         $item->item_id = $request->item_id;
         $item->category_id = $request->category_id;
+        $item->unit_price = $request->unit_price;
         $item->name = $request->name;
         $item->low_stock = $request->low_stock;
         $item->item_uom_id = $request->item_uom;
@@ -245,6 +275,7 @@ class ItemController extends Controller
         $this->validate($request,[
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
+            'unit_price' => 'required|min:0|max:255',
             'low_stock' => 'required|integer|min:0|max:255',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
@@ -257,6 +288,7 @@ class ItemController extends Controller
         $item = Item::findOrfail($id);
         $item->category_id = $request->category_id;
         $item->name = $request->name;
+        $item->unit_price = $request->unit_price;
         $item->low_stock = $request->low_stock;
         $item->item_uom_id = $request->item_uom;
         $item->weight_uom_id = $request->weight_uom;

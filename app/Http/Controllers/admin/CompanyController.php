@@ -146,7 +146,7 @@ class CompanyController extends Controller
     public function edit($id)
     {
         $companies = Company::findOrFail($id);
-        return view('admin.company.edit',compact('companies'));
+        return view('admin.company.edit-new',compact('companies'));
     }
 
     /**

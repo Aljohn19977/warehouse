@@ -26,7 +26,7 @@ class Item extends Model
     }
 
     public function category(){
-        return $this->belongsTo('App\Models\Item_Category');
+        return $this->belongsTo('App\Models\Item_Category','category_id');
     }
 
     public function uom_weight(){

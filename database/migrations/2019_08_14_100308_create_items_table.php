@@ -22,6 +22,7 @@ class CreateItemsTable extends Migration
             $table->integer('weight_uom_id');
             $table->integer('low_stock');
             $table->integer('item_uom_id');
+            $table->float('unit_price');
             $table->string('description')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();

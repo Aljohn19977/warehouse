@@ -178,7 +178,7 @@ $(document).ready(function(){
                       <label for="supplier_id">Supplier ID</label>
                       <input type="text" class="form-control" id="supplier_id" name="supplier_id" disabled>
                   </div>
-                  <div class="form-group" id="name_this">
+                  <div class="form-group" id="fullname_this">
                       <label for="name">Full Name</label>
                       <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Name">
                   </div>

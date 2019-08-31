@@ -82,7 +82,7 @@ function api_supplier_info(){
             var newOption = new Option(row.name, row.id, false, false);
             $('#category_id').append(newOption).trigger('change');
         })
-        
+        api_selected_category();
         },
         error: function(error){
           console.log('error');
@@ -113,7 +113,6 @@ function api_supplier_info(){
         type: 'get',
         url: "{{ route('uom.api_item_uom_list') }}",
         success: function(data) {
-
         JSON.parse(data).data.forEach(row => {
             var newOption = new Option(row.name, row.id, false, false);
             $('#item_uom').append(newOption).trigger('change');
@@ -125,6 +124,24 @@ function api_supplier_info(){
         }
      }); 
   }
+
+function api_selected_category(){
+
+$.ajax({
+    type: 'get',
+    dataType: 'JSON',
+    url: "{{ route('item.api_selected_category',['id' => $items->id ]) }}",
+    success: function(data) {
+      
+        var selected = data.data;
+        $('#category_id').val(selected).trigger("change");
+    },
+    error: function(error){
+      console.log('error');
+    }
+ }); 
+
+}
 
 function api_selected_supplier(){
 
@@ -192,13 +209,16 @@ $('#reset').click(function(event){
   Pace.track(function () {
   $.ajax({
         type: 'get',
-        url: "{{ route('supplier.api_view',['id' => $items->id ]) }}",
+        url: "{{ route('item.api_view',['id' => $items->id ]) }}",
         success: function(data) {
            $.each(data, function(key, value){                         
               $('#'+key+'').val(value);
               $('#'+key+'').text(value);
            });
-           api_selected_company();
+           api_selected_weight_uom();
+           api_selected_item_uom();
+           api_selected_supplier();
+           
         },
         error: function(error){
           console.log('error');
@@ -263,7 +283,7 @@ $('#update_item').on('submit',function(event){
     event.preventDefault();
     Pace.restart();
     var formData = new FormData(this);
-    
+
       Pace.track(function () {
                 $.ajax({
                       url: "{{ route('item.update',['id' => $items->id ]) }}",
@@ -341,8 +361,32 @@ $('#update_item').on('submit',function(event){
           <form role="form" method="post" id="update_item" enctype="multipart/form-data">
             <div class="card-body">
               <div class="row">
-                <div class="col-md-4">
-                <div class="form-group" id="item_id_this">
+                <div class="col-md-2">
+                <div class="card-body box-profile">
+                      <div class="text-center">
+                      
+                        <div class="row" style="margin-bottom:20px;">
+                        <div class="col-md-12">
+                        @if ($items->photo != null)
+                        <img class="profile-user-img img-fluid"
+                            src="{{ asset($items->photo) }}"
+                            alt="User profile picture" id="box_photo" style="margin-bottom:10px; width:140px;">
+                        @else
+                        <img class="profile-user-img img-fluid"
+                            src="{{ asset('admin/dist/img/no-photos.png') }}"
+                            alt="User profile picture" id="box_photo" style="margin-bottom:10px; width:140px;">
+                        @endif
+                        </div>
+                        <div class="col-md-12">
+                        <button id="change_photo" class="btn btn-block btn-primary btn-sm"><i class="nav-icon fas fa-pen" style="color:white; margin-right:10px;"></i>Change</button>
+                        <button id="remove_photo" class="btn btn-block btn-primary btn-sm disabled"><i class="nav-icon fas fa-trash" style="color:white; margin-right:10px;"></i>Remove</button>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>                
+                <div class="col-md-5">
+                  <div class="form-group" id="item_id_this">
                       <label for="name">Item ID</label>
                       <input type="text" class="form-control" id="item_id" name="item_id" value="{{ $items->item_id }}" disabled>
                   </div>  
@@ -357,20 +401,21 @@ $('#update_item').on('submit',function(event){
                     </select>
                   </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
+                
                   <div class="row">
-                <div class="col-md-6">
+                    <div class="col-md-6">
                       <div class="form-group" id="weight_this">
                           <label for="name">Weight</label>
                           <input type="number" class="form-control" id="weight" name="weight" placeholder="Weight" value="{{ $items->weight }}" >
                       </div>
                     </div>
                     <div class="col-md-6">
-                    <div class="form-group" id="weight_uom_this">
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>  
-                        <label>UOM <small>(Weight)</small></label>
-                          <select class="select2" id="weight_uom" name="weight_uom" data-placeholder="UOM" style="width: 100%;">
-                          </select>
+                      <div class="form-group" id="weight_uom_this">
+                        <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>  
+                          <label>UOM <small>(Weight)</small></label>
+                            <select class="select2" id="weight_uom" name="weight_uom" data-placeholder="UOM" style="width: 100%;">
+                            </select>
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -388,37 +433,29 @@ $('#update_item').on('submit',function(event){
                       </div>
                     </div>
                   </div>
-                  <div class="form-group" id="category_id_this">
-                    <label>Category</label>
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card-body box-profile">
-                      <div class="text-center">
-                      
-                        <div class="row" style="margin-bottom:20px;">
-                        <div class="col-md-12">
-                        <img class="profile-user-img img-fluid"
-                            src="{{ asset($items->photo) }}"
-                            alt="User profile picture" id="box_photo" style="margin-bottom:10px;">
+                  <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group" id="unit_price_this">
+                            <label for="name">Unit Price</small></label>
+                            <input type="number" class="form-control" id="unit_price" name="unit_price" value="{{ $items->unit_price }}" placeholder="Unit Price">
                         </div>
-                        <div class="col-md-12">
-                        <button id="change_photo" class="btn btn-block btn-primary btn-sm"><i class="nav-icon fas fa-pen" style="color:white; margin-right:10px;"></i>Change</button>
-                        <button id="remove_photo" class="btn btn-block btn-primary btn-sm disabled"><i class="nav-icon fas fa-trash" style="color:white; margin-right:10px;"></i>Remove</button>
-                        </div>
-                        </div>
+                    </div>
+                    <div class="col-md-7">
+                      <div class="form-group" id="category_id_this">
+                        <label>Category</label>
+                        <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                        <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
+                        </select>
                       </div>
                     </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-lg-12">
-              <div class="form-group">
+                <div class="col-md-12">
+                   <div class="form-group">
                           <label>Description</label>
                           <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details...">{{ $items->description }}</textarea>
                     </div>
+              </div>
               </div>
               <!-- /.row -->
             </div>

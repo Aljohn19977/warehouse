@@ -278,11 +278,21 @@ $(document).ready(function(){
                       </div>
                     </div>
                   </div>
-                  <div class="form-group" id="category_id_this">
-                    <label>Category</label>
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                    <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
-                    </select>
+                  <div class="row">
+                    <div class="col-md-5">
+                        <div class="form-group" id="unit_price_this">
+                            <label for="name">Unit Price</small></label>
+                            <input type="number" class="form-control" id="unit_price" name="unit_price" placeholder="Unit Price">
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                      <div class="form-group" id="category_id_this">
+                        <label>Category</label>
+                        <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                        <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-4">
