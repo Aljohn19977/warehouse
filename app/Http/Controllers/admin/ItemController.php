@@ -113,7 +113,7 @@ class ItemController extends Controller
     {
         $items = Item::findOrFail($id);
 
-        $selected_category = $items->category->id;  
+        $selected_category = $items->category_id;  
 
         $json_data = array(
           "data" => $selected_category,  
@@ -126,7 +126,7 @@ class ItemController extends Controller
     {
         $items = Item::findOrFail($id);
 
-        $selected_uom_weight = $items->uom_weight->id;  
+        $selected_uom_weight = $items->weight_uom_id;  
 
         
         $json_data = array(
@@ -140,7 +140,7 @@ class ItemController extends Controller
     {
         $items = Item::findOrFail($id);
 
-        $selected_uom_item = $items->uom_item->id;  
+        $selected_uom_item = $items->item_uom_id;  
 
         $json_data = array(
           "data" => $selected_uom_item,  

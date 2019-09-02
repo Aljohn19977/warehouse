@@ -25,6 +25,10 @@ class Item extends Model
         return $this->belongsToMany('App\Models\Supplier');
     }
 
+    public function purchase_order(){
+        return $this->belongsToMany('App\Models\Purchase_Order_Item','item_id');
+    }
+
     public function category(){
         return $this->belongsTo('App\Models\Item_Category','category_id');
     }

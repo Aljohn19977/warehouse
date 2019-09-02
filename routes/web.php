@@ -26,7 +26,9 @@ Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_o
 Route::get('/purchase_order/get_purchase_order_id', 'PurchaseOrderController@get_purchase_order_id')->name('purchase_order.get_purchase_order_id');
 Route::get('/purchase_order/get_transaction_id', 'PurchaseOrderController@get_transaction_id')->name('purchase_order.get_transaction_id');
 Route::get('/purchase_order/supplier/api/supplier/list','PurchaseOrderController@api_supplier_list')->name('purchase_order.api_supplier_list');
+Route::get('/purchase_order/api/list','PurchaseOrderController@api_purchase_order_list')->name('purchase_order.api_purchase_order_list');
 Route::get('/purchase_order/get_supplier_info/{id}', 'PurchaseOrderController@get_supplier_info')->name('purchase_order.get_supplier_info');
+Route::get('/purchase_order/get_purchase_order_info/{id}', 'PurchaseOrderController@get_purchase_order_info')->name('purchase_order.get_purchase_order_info');
 Route::get('/purchase_order/get_supplier_item_info_via_id/{id}', 'PurchaseOrderController@get_supplier_item_info_via_id')->name('purchase_order.get_supplier_item_info_via_id');
 Route::get('/purchase_order/get_supplier_item_info_via_item_id/{id}', 'PurchaseOrderController@get_supplier_item_info_via_item_id')->name('purchase_order.get_supplier_item_info_via_item_id');
 Route::post('/purchase_order/store', 'PurchaseOrderController@store')->name('purchase_order.store');

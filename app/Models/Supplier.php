@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchase_Order;
 
 class Supplier extends Model
 {
@@ -28,5 +29,9 @@ class Supplier extends Model
 
     public function item(){
         return $this->belongsToMany('App\Models\Item');
+    }
+
+    public function purchase_order(){
+        return $this->hasMany(Purchase_Order::Class);
     }
 }
