@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Purchase_Order;
+
 
 class Company extends Model
 {
@@ -27,4 +29,5 @@ class Company extends Model
     public function item(){
         return $this->hasMany('App\Models\Item_Category');
     }
+
 }

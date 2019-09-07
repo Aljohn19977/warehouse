@@ -19,20 +19,22 @@
 
 Route::group(['namespace' => 'Admin'], function(){
 
-Route::get('/receiving', 'ReceivingController@index');
+Route::get('/receiving', 'ReceivingController@index')->name('recieving.index');;
 
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');
 Route::get('/purchase_order/get_purchase_order_id', 'PurchaseOrderController@get_purchase_order_id')->name('purchase_order.get_purchase_order_id');
 Route::get('/purchase_order/get_transaction_id', 'PurchaseOrderController@get_transaction_id')->name('purchase_order.get_transaction_id');
 Route::get('/purchase_order/supplier/api/supplier/list','PurchaseOrderController@api_supplier_list')->name('purchase_order.api_supplier_list');
-Route::get('/purchase_order/api/list','PurchaseOrderController@api_purchase_order_list')->name('purchase_order.api_purchase_order_list');
+Route::get('/purchase_order/api/list/{id}','PurchaseOrderController@api_purchase_order_list')->name('purchase_order.api_purchase_order_list');
 Route::get('/purchase_order/get_supplier_info/{id}', 'PurchaseOrderController@get_supplier_info')->name('purchase_order.get_supplier_info');
 Route::get('/purchase_order/get_purchase_order_info/{id}', 'PurchaseOrderController@get_purchase_order_info')->name('purchase_order.get_purchase_order_info');
 Route::get('/purchase_order/get_supplier_item_info_via_id/{id}', 'PurchaseOrderController@get_supplier_item_info_via_id')->name('purchase_order.get_supplier_item_info_via_id');
 Route::get('/purchase_order/get_supplier_item_info_via_item_id/{id}', 'PurchaseOrderController@get_supplier_item_info_via_item_id')->name('purchase_order.get_supplier_item_info_via_item_id');
 Route::post('/purchase_order/store', 'PurchaseOrderController@store')->name('purchase_order.store');
+Route::post('/purchase_order/cancel', 'PurchaseOrderController@cancel')->name('purchase_order.cancel');
 Route::post('/purchase_order/validation/add_item_table', 'PurchaseOrderController@validation_add_item_table')->name('purchase_order.validation_add_item_table');
+Route::post('/purchase_order/api_get_all_purchase_order', 'PurchaseOrderController@api_get_all_purchase_order')->name('purchase_order.api_get_all_purchase_order');
 
 Route::get('/item', 'ItemController@index')->name('item.index');
 Route::get('/item/create', 'ItemController@create')->name('item.create');

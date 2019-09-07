@@ -191,14 +191,14 @@ class ItemController extends Controller
        
         $this->validate($request,[
             'item_id' => 'required|max:255',
-            'unit_price' => 'required|min:0|max:255',
+            'unit_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
             'low_stock' => 'required|integer|min:0|max:255',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
-            'weight_uom' => 'required|min:0|max:255',
-            'weight' => 'required|max:255',
+            'weight_uom' => 'required',
+            'weight' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'description' => 'max:255',
             'photo' => 'image|max:5000',
         ]);
@@ -342,8 +342,7 @@ class ItemController extends Controller
  
         //query if no values on search text
  
-          $items = Item::offset($start)
-                ->join('item_category', 'items.category_id', '=', 'item_category.id')
+          $items = Item::join('item_category', 'items.category_id', '=', 'item_category.id')
                 ->offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir)

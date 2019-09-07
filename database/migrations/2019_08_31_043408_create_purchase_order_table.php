@@ -20,7 +20,7 @@ class CreatePurchaseOrderTable extends Migration
             $table->string('supplier_id');
             $table->string('order_date');
             $table->string('deliver_to');
-            $table->float('total');
+            $table->string('total');
             $table->string('status');
             $table->timestamps();
         });

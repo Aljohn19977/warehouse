@@ -128,6 +128,7 @@ $(document).ready(function(){
       $('#name').val('');
       $('#weight').val('');
       $('#low_stock').val('');
+      $('#unit_price').val('');
       $("#photo").val('');
       $("#description").val('');
       $('.select2').select2().val(null).trigger("change");
@@ -252,7 +253,7 @@ $(document).ready(function(){
                 <div class="col-md-6">
                       <div class="form-group" id="weight_this">
                           <label for="name">Weight</label>
-                          <input type="number" class="form-control" id="weight" name="weight" placeholder="Weight">
+                          <input type="text" class="form-control" id="weight" name="weight" placeholder="Weight">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -282,7 +283,7 @@ $(document).ready(function(){
                     <div class="col-md-5">
                         <div class="form-group" id="unit_price_this">
                             <label for="name">Unit Price</small></label>
-                            <input type="number" class="form-control" id="unit_price" name="unit_price" placeholder="Unit Price">
+                            <input type="text" class="form-control" id="unit_price" name="unit_price" placeholder="Unit Price">
                         </div>
                     </div>
                     <div class="col-md-7">

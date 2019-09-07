@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchase_Order_Item;
 use App\Models\Supplier;
+use App\Models\Company;
 
 class Purchase_Order extends Model
 {
@@ -28,4 +29,5 @@ class Purchase_Order extends Model
     public function supplier(){
         return $this->belongsTo(Supplier::Class);
     }
+
 }

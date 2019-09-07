@@ -18,8 +18,8 @@ class CreatePurchaseOrderItemTable extends Migration
             $table->string('purchase_order_id');
             $table->string('item_id');
             $table->integer('quantity');
-            $table->float('price');
-            $table->float('subtotal');
+            $table->string('price');
+            $table->string('subtotal');
     
             $table->timestamps();
         });
