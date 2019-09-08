@@ -19,7 +19,9 @@
 
 Route::group(['namespace' => 'Admin'], function(){
 
-Route::get('/receiving', 'ReceivingController@index')->name('recieving.index');;
+Route::get('/receiving', 'ReceivingController@index')->name('receiving.index');;
+Route::get('/receiving/transaction/list','ReceivingController@api_transaction_list')->name('receiving.api_transaction_list');
+Route::get('/receiving/get_transaction_info/{id}', 'ReceivingController@get_transaction_info')->name('receiving.get_transaction_info');
 
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');

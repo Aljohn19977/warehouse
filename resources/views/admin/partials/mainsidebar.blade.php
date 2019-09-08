@@ -47,7 +47,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="{{ route('recieving.index')}}" class="nav-link">
+            <a href="{{ route('receiving.index')}}" class="nav-link">
               <i class="nav-icon fas fa-truck"></i>
               <p>
                Receiving
