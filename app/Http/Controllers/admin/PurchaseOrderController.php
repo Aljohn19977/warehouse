@@ -102,7 +102,8 @@ class PurchaseOrderController extends Controller
         $item->uom_weight->acronym;
 
         return response()->json([
-            'unit_price'=> $item->unit_price,
+            'purchase_price'=> $item->purchase_price,
+            'tax'=> $item->tax,
             'id'=> $id,
             'item_id'=> $item->item_id,
             'item_name'=> $item->name,
@@ -121,7 +122,8 @@ class PurchaseOrderController extends Controller
         $item->uom_weight->acronym;
 
         return response()->json([
-            'unit_price'=> $item->unit_price,
+            'purchase_price'=> $item->purchase_price,
+            'tax'=> $item->tax,
             'id'=> $get_id,
             'item_id'=> $item->item_id,
             'item_name'=> $item->name,

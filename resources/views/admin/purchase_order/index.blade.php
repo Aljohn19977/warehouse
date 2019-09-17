@@ -574,9 +574,10 @@ $('#supplier').on('select2:select', function (e) {
         url: "/purchase_order/get_supplier_item_info_via_id/"+modal_data.id,
         success: function(data) {
             $('#item_id_modal').select2().val(data.item_id).trigger("change");
-            $('#unit_price_modal').val(data.unit_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#unit_price_modal').val(data.purchase_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             $('#item_uom_modal').val(data.item_uom);
             $('#item_name').val(data.item_name);
+            $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
@@ -596,9 +597,10 @@ $('#item_id_modal').on('select2:select', function (e) {
         url: "/purchase_order/get_supplier_item_info_via_item_id/"+modal_data.id,
         success: function(data) {
             $('#item_name_modal').select2().val(data.id).trigger("change");
-            $('#unit_price_modal').val(data.unit_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#unit_price_modal').val(data.purchase_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
             $('#item_uom_modal').val(data.item_uom);
             $('#item_name').val(data.item_name);
+            $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
@@ -646,10 +648,15 @@ $('#nav4_transaction_no').on('select2:select', function (e) {
 $("#quantity_modal" ).change(function() {
 
   var quantity = $('#quantity_modal').val();
+  var tax = $('#tax_modal').val();
   var price = $('#unit_price_modal').val().replace(/,/g, '');
   var subtotal = quantity*price;
+  var taxtotal = subtotal*tax;
+  var total = subtotal+taxtotal;
 
   $('#subtotal_modal').val(subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  $('#taxtotal_modal').val(taxtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  $('#total_modal').val(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
 });
 
@@ -691,6 +698,7 @@ $('#modal_add_close').on('click', function (event) {
                       html += '<td><input type="text" class="form-control" name="row_quantity[]" value="'+quantity+'" hidden>'+quantity+'</td>';
                       html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
                       html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                      html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+' %</td>';
                       html += '<td class="row_subtotal">'+subtotal_table+'<input type="text" class="form-control" name="row_subtotal[]" value="'+subtotal+'" hidden></td>';
                       html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                       html += '</tr>';
@@ -750,6 +758,7 @@ $('#modal_add_new').on('click', function (event) {
                           html += '<td><input type="text" class="form-control" name="row_quantity[]" value="'+quantity+'" hidden>'+quantity+'</td>';
                           html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
                           html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                          html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+' %</td>';
                           html += '<td class="row_subtotal">'+subtotal_table+'<input type="text" class="form-control" name="row_subtotal[]" value="'+subtotal+'" hidden></td>';
                           html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                           html += '</tr>';
@@ -1145,17 +1154,18 @@ $(document).on('click', '#table_cancel', function(){
                                         <th>Quantity</th>
                                         <th>UOM(Item)</th>
                                         <th>Item Price</th>
+                                        <th>Tax Rate</th>
                                         <th>Sub Total</th>
                                         <th></th>
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      <tr>
+                                      <!-- <tr>
                                         <th colspan="5" style="text-align:right">Total:</th>
                                         <th colspan="7" style="text-align:center">
                                           <span id="total"></span>
                                         </th>
-                                      </tr>
+                                      </tr> -->
                                     </tbody>
                                   </table>
                                 </div>
@@ -1166,6 +1176,47 @@ $(document).on('click', '#table_cancel', function(){
                             <!-- /.card-body -->
                           </div>
                         </div>
+                      </div>
+                      <div class="row">
+                        <!-- accepted payments column -->
+                        <div class="col-lg-4" style="margin-top:25px;">
+                          <div class="form-group">
+                            <label>Comments</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details..."></textarea>
+                          </div>
+                        </div>
+                        <div class="col-lg-2">
+
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-lg-6 col-md-12">
+                          <div class="table-responsive">
+                            <table class="table">
+                              <tbody>
+                              <tr>
+                                <th style="width:50%">Total Volume(m&#179;):</th>
+                                <td>0</td>
+                              </tr>
+                              <tr>
+                                <th style="width:50%">Total Weight(kg):</th>
+                                <td>0</td>
+                              </tr>
+                              <tr>
+                                <th style="width:50%">Sub Total:</th>
+                                <td>0</td>
+                              </tr>
+                              <tr>
+                                <th>Tax Total:</th>
+                                <td>0</td>
+                              </tr>
+                              <tr>
+                                <th>Total:</th>
+                                <td><span id="total"><span></td>
+                              </tr>
+                            </tbody></table>
+                          </div>
+                        </div>
+                        <!-- /.col -->
                       </div>
                       <div class="col-lg-12">
                         <button id="submit" class="btn btn-primary">Create</button>
@@ -1496,6 +1547,12 @@ $(document).on('click', '#table_cancel', function(){
                          <input type="text" class="form-control" id="unit_price_modal" name="unit_price_modal" placeholder="Price" readonly>
                       </div>
                     </div>
+                    <div class="form-group row"  id="tax_modal_this">
+                      <label for="inputEmail3" class="col-sm-3 control-label">Tax Rate</label>
+                      <div class="col-sm-9">
+                         <input type="text" class="form-control" id="tax_modal" name="tax_modal" placeholder="Tax" readonly>
+                      </div>
+                    </div>
                     <div class="form-group row" id="quantity_modal_this">
                       <label for="inputEmail3" class="col-sm-3 control-label">Quantity</label>
                       <div class="col-sm-6">
@@ -1505,10 +1562,22 @@ $(document).on('click', '#table_cancel', function(){
                          <input type="text" class="form-control" id="item_uom_modal" name="item_uom_modal" placeholder="UOM(Item)" readonly>
                       </div>
                     </div>
-                    <div class="form-group row" id="subtotal_modal_this">
-                      <label for="inputEmail3" class="col-sm-3 control-label">Subtotal</label>
+                    <div class="form-group row" id="taxtotal_modal_this">
+                      <label for="inputEmail3" class="col-sm-3 control-label">Tax Total</label>
                       <div class="col-sm-9">
-                         <input type="text" class="form-control" id="subtotal_modal" name="subtotal_modal" placeholder="Subtotal" readonly>
+                         <input type="text" class="form-control" id="taxtotal_modal" name="taxtotal_modal" placeholder="Tax Total" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row" id="subtotal_modal_this">
+                      <label for="inputEmail3" class="col-sm-3 control-label">Sub Total</label>
+                      <div class="col-sm-9">
+                         <input type="text" class="form-control" id="subtotal_modal" name="subtotal_modal" placeholder="Sub Total" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row" id="total_modal_this">
+                      <label for="inputEmail3" class="col-sm-3 control-label">Total</label>
+                      <div class="col-sm-9">
+                         <input type="text" class="form-control" id="total_modal" name="total_modal" placeholder="Total" readonly>
                       </div>
                     </div>
                   </div>

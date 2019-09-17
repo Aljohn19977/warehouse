@@ -15,6 +15,9 @@ class CreateReceivingItemTable extends Migration
     {
         Schema::create('receiving_item', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('receiving_id');
+            $table->string('item_id');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

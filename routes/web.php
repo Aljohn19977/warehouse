@@ -22,6 +22,24 @@ Route::group(['namespace' => 'Admin'], function(){
 Route::get('/receiving', 'ReceivingController@index')->name('receiving.index');;
 Route::get('/receiving/transaction/list','ReceivingController@api_transaction_list')->name('receiving.api_transaction_list');
 Route::get('/receiving/get_transaction_info/{id}', 'ReceivingController@get_transaction_info')->name('receiving.get_transaction_info');
+Route::get('/receiving/receive_item_info/{id}', 'ReceivingController@receive_item_info')->name('receiving.receive_item_info');
+Route::get('/receiving/get_received_item/{id}', 'ReceivingController@get_received_item')->name('receiving.get_received_item');
+Route::get('/receiving/get_received_missing_item/{id}', 'ReceivingController@get_received_missing_item')->name('receiving.get_received_missing_item');
+Route::get('/receiving/get_received_damage_item/{id}', 'ReceivingController@get_received_damage_item')->name('receiving.get_received_damage_item');
+
+Route::get('/receiving/undo_receive_item_info/{id}', 'ReceivingController@undo_receive_item_info')->name('receiving.undo_receive_item_info');
+Route::get('/receiving/undo_receive_missing_item_info/{id}', 'ReceivingController@undo_receive_missing_item_info')->name('receiving.undo_receive_missing_item_info');
+Route::get('/receiving/undo_receive_damage_item_info/{id}', 'ReceivingController@undo_receive_damage_item_info')->name('receiving.undo_receive_damage_item_info');
+Route::post('/receiving/receive_item', 'ReceivingController@receive_item')->name('receiving.receive_item');
+Route::post('/receiving/receive_missing_item', 'ReceivingController@receive_missing_item')->name('receiving.receive_missing_item');
+Route::post('/receiving/receive_damage_item', 'ReceivingController@receive_damage_item')->name('receiving.receive_damage_item');
+Route::post('/receiving/undo_receive_item', 'ReceivingController@undo_receive_item')->name('receiving.undo_receive_item');
+Route::post('/receiving/undo_receive_missing_item', 'ReceivingController@undo_receive_missing_item')->name('receiving.undo_receive_missing_item');
+Route::post('/receiving/undo_receive_damage_item', 'ReceivingController@undo_receive_damage_item')->name('receiving.undo_receive_damage_item');
+
+Route::post('/receiving/receive_order', 'ReceivingController@receive_order')->name('receiving.receive_order');
+
+
 
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');

@@ -50,7 +50,7 @@
             <a href="{{ route('receiving.index')}}" class="nav-link">
               <i class="nav-icon fas fa-truck"></i>
               <p>
-               Receiving
+               Purhcase Order Receiving
               </p>
             </a>
           </li>

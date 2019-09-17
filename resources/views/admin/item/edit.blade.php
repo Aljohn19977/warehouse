@@ -437,7 +437,7 @@ $('#update_item').on('submit',function(event){
                     <div class="col-md-5">
                         <div class="form-group" id="unit_price_this">
                             <label for="name">Unit Price</small></label>
-                            <input type="number" class="form-control" id="unit_price" name="unit_price" value="{{ $items->unit_price }}" placeholder="Unit Price">
+                            <input type="number" class="form-control" id="default_purchase_price" name="default_purchase_price" value="{{ $items->default_purchase_price }}" placeholder="Unit Price">
                         </div>
                     </div>
                     <div class="col-md-7">

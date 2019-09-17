@@ -17,12 +17,16 @@ class CreateItemsTable extends Migration
             $table->bigIncrements('id');
             $table->string('item_id');
             $table->integer('category_id');
+            $table->string('type');
             $table->string('name');
-            $table->float('weight');
+            $table->string('weight');
             $table->integer('weight_uom_id');
             $table->integer('low_stock');
             $table->integer('item_uom_id');
-            $table->float('unit_price');
+            $table->string('purchase_price');
+            $table->string('sale_price');
+            $table->string('cubic');
+            $table->string('tax');
             $table->string('description')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();

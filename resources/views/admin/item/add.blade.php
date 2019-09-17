@@ -128,7 +128,8 @@ $(document).ready(function(){
       $('#name').val('');
       $('#weight').val('');
       $('#low_stock').val('');
-      $('#unit_price').val('');
+      $('#purchase_price').val('');
+      $('#sale_price').val('');
       $("#photo").val('');
       $("#description").val('');
       $('.select2').select2().val(null).trigger("change");
@@ -142,6 +143,38 @@ $(document).ready(function(){
   $('#clear').click(function(event){
     event.preventDefault();
     clear_fields();
+  });
+
+  $("#length" ).change(function() {
+
+    var length = $('#length').val();
+    var width = $('#width').val();
+    var depth = $('#depth').val();
+    var cubic = length*width*depth;
+
+    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+
+  });
+
+  $("#width" ).change(function() {
+    var length = $('#length').val();
+    var width = $('#width').val();
+    var depth = $('#depth').val();
+    var cubic = length*width*depth;
+
+    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+
+  });
+
+  $("#depth" ).change(function() {
+
+    var length = $('#length').val();
+    var width = $('#width').val();
+    var depth = $('#depth').val();
+    var cubic = length*width*depth;
+
+    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+
   });
 
   $('#add_item').on('submit',function(event){
@@ -247,6 +280,12 @@ $(document).ready(function(){
                     <select class="select2" id="supplier" name="supplier[]" multiple="multiple" data-placeholder="Select a Supplier" style="width: 100%;">
                     </select>
                   </div>
+                  <div class="form-group" id="category_id_this">
+                        <label>Category</label>
+                        <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
+                        <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
+                        </select>
+                  </div>
                 </div>
                 <div class="col-md-4">
                   <div class="row">
@@ -265,9 +304,33 @@ $(document).ready(function(){
                       </div>
                     </div>
                     <div class="col-md-6">
+                      <div class="form-group" id="width_this">
+                          <label>Width <small>(Meter)</small></label>
+                          <input type="text" class="form-control" id="width" name="width" placeholder="Width">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="length_this">
+                          <label>Length <small>(Meter)</small></label>
+                          <input type="text" class="form-control" id="length" name="length" placeholder="Length">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="depth_this">
+                          <label>Depth <small>(Meter)</small></label>
+                          <input type="text" class="form-control" id="depth"  name="depth" placeholder="Depth">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="cubic_this">
+                          <label>Cubic Total <small>(Meter)</small></label>
+                          <input type="text" class="form-control" id="cubic" name="cubic" placeholder="Cubic" readonly>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
                       <div class="form-group" id="low_stock_this">
                           <label for="name">Low Stock <small>(Alert Qty)</small></label>
-                          <input type="number" class="form-control" id="low_stock" name="low_stock" placeholder="Qty">
+                          <input type="text" class="form-control" id="low_stock" name="low_stock" placeholder="Qty">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -279,27 +342,41 @@ $(document).ready(function(){
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-5">
-                        <div class="form-group" id="unit_price_this">
-                            <label for="name">Unit Price</small></label>
-                            <input type="text" class="form-control" id="unit_price" name="unit_price" placeholder="Unit Price">
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                      <div class="form-group" id="category_id_this">
-                        <label>Category</label>
-                        <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>
-                        <select class="select2" id="category_id" name="category_id" data-placeholder="Select a Category" style="width: 100%;">
-                        </select>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 <div class="col-md-4">
+                    <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group" id="purchase_price_this">
+                              <label for="name">Purchase Price</small></label>
+                              <input type="text" class="form-control" id="purchase_price" name="purchase_price" placeholder="Unit Price">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group" id="sale_price_this">
+                              <label for="name">Sale Price</small></label>
+                              <input type="text" class="form-control" id="sale_price" name="sale_price" placeholder="Unit Price">
+                          </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group" id="tax_this">
+                          <label>Tax Percentage</label>
+                          <input type="text" class="form-control" id="tax" name="tax" placeholder="Tax">
+                      </div>
+                      </div>                     
+                      <div class="col-md-6">
+                        <div class="form-group" id="type_this">
+                          <label>Item Type</label>
+                            <select class="select2" id="type" name="type" data-placeholder="Item Type" style="width: 100%;">
+                              <option></option>
+                              <option value="Serialize">Serialize</option>
+                              <option value="Batch Tracked">Batch Tracked</option>
+                            </select>
+                        </div>
+                      </div>
+                    </div>
                     <div class="form-group">
                           <label>Description</label>
-                          <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details..."></textarea>
+                          <textarea class="form-control" id="description" name="description" rows="2" placeholder="Details..."></textarea>
                     </div>
                     <div class="form-group" id="photo_this">
                           <label for="photo">Image File</label>

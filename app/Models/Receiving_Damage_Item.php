@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
 use App\Models\Receiving;
 
+use Illuminate\Database\Eloquent\Model;
 
-class Receiving_Item extends Model
+class Receiving_Damage_Item extends Model
 {
-    public $table = "receiving_item";
+    public $table = "receiving_damage_item";
 
     protected $fillable = [
         'receiving_id', 

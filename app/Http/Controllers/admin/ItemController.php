@@ -26,7 +26,7 @@ class ItemController extends Controller
 
         return response()->json([
             'item_id'=> $item->item_id,
-            'unit_price'=> $item->unit_price,
+            'default_purchase_price'=> $item->default_purchase_price,
             'name'=> $item->name,
             'low_stock'=> $item->low_stock,
             'weight'=> $item->weight,
@@ -188,13 +188,20 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-       
+
         $this->validate($request,[
             'item_id' => 'required|max:255',
-            'unit_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'purchase_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'sale_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'tax' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'width' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'length' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'depth' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'cubic' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
-            'low_stock' => 'required|integer|min:0|max:255',
+            'type' => 'required|max:255',
+            'low_stock' => 'required|integer|min:1',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
             'weight_uom' => 'required',
@@ -217,12 +224,16 @@ class ItemController extends Controller
         $item = new Item;
         $item->item_id = $request->item_id;
         $item->category_id = $request->category_id;
-        $item->unit_price = $request->unit_price;
+        $item->purchase_price =  $request->purchase_price;
+        $item->sale_price =  $request->sale_price;
         $item->name = $request->name;
+        $item->type = $request->type;
         $item->low_stock = $request->low_stock;
         $item->item_uom_id = $request->item_uom;
         $item->weight_uom_id = $request->weight_uom;
         $item->weight = $request->weight;
+        $item->cubic = $request->cubic;
+        $item->tax = $request->tax;
         $item->description = $request->description;
         $item->photo = $filePath;
         $item->save();
@@ -273,27 +284,38 @@ class ItemController extends Controller
     {
 
         $this->validate($request,[
+            'purchase_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'sale_price' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'tax' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'width' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'length' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'depth' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'cubic' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
-            'unit_price' => 'required|min:0|max:255',
-            'low_stock' => 'required|integer|min:0|max:255',
+            'type' => 'required|max:255',
+            'low_stock' => 'required|integer|min:1',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
-            'weight_uom' => 'required|min:0|max:255',
-            'weight' => 'required|max:255',
+            'weight_uom' => 'required',
+            'weight' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'description' => 'max:255',
         ]);
 
 
         $item = Item::findOrfail($id);
         $item->category_id = $request->category_id;
+        $item->type = $request->type;
         $item->name = $request->name;
-        $item->unit_price = $request->unit_price;
+        $item->purchase_price =  $request->purchase_price;
+        $item->sale_price =  $request->sale_price;
         $item->low_stock = $request->low_stock;
         $item->item_uom_id = $request->item_uom;
         $item->weight_uom_id = $request->weight_uom;
         $item->weight = $request->weight;
         $item->description = $request->description;
+        $item->cubic = $request->cubic;
+        $item->tax = $request->tax;
         $item->update();
                    
         $item->supplier()->sync($request->supplier);

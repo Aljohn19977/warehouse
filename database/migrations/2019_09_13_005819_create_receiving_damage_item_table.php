@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateReceivingTable extends Migration
+class CreateReceivingDamageItemTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateReceivingTable extends Migration
      */
     public function up()
     {
-        Schema::create('receiving', function (Blueprint $table) {
+        Schema::create('receiving_damage_item', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('receiving_id');
-            $table->string('transaction_id');
-            $table->string('supplier_id');
-            $table->string('order_date');
-            $table->string('status');
+            $table->string('item_id');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateReceivingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('receiving');
+        Schema::dropIfExists('receiving_damage_item');
     }
 }
