@@ -20,7 +20,12 @@ class CreatePurchaseOrderTable extends Migration
             $table->string('supplier_id');
             $table->string('order_date');
             $table->string('deliver_to');
+            $table->string('total_volume');
+            $table->string('total_weight');
+            $table->string('total_tax');
+            $table->string('subtotal');
             $table->string('total');
+            $table->string('comments');
             $table->string('status');
             $table->timestamps();
         });

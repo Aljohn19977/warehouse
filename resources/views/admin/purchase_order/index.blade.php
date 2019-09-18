@@ -35,7 +35,11 @@ $('.select2').select2();
 
 get_purchase_order_id();
 get_supplier_list();
+get_weight_total();
+get_volume_total();
+get_subtotal();
 get_total();
+get_tax();
 
 
 purchase_order_datatable();
@@ -359,10 +363,43 @@ function get_purchase_order_view_list(po_id){
 
 function get_total(){
   var total = 0;
-      $(".row_subtotal").each(function(){
+      $(".row_total").each(function(){
         total += parseFloat($(this).text().replace(/,/g, ''));
       });
       $('#total').text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+}
+
+function get_tax(){
+  var total = 0;
+      $(".row_tax").each(function(){
+        total += parseFloat($(this).text().replace(/,/g, ''));
+      });
+      $('#tax').text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+}
+
+function get_subtotal(){
+  var total = 0;
+      $(".row_subtotal").each(function(){
+        total += parseFloat($(this).text().replace(/,/g, ''));
+      });
+      $('#subtotal').text(total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+}
+
+function get_weight_total(){
+  var total = 0;
+      $(".row_weight").each(function(){
+        total += parseFloat($(this).text().replace(/,/g, ''));
+      });
+
+      $('#weight_total').text(Math.round(total * 100) / 100);
+}
+
+function get_volume_total(){
+  var total = 0;
+      $(".row_volume").each(function(){
+        total += parseFloat($(this).text().replace(/,/g, ''));
+      });
+      $('#volume_total').text(Math.round(total * 100) / 100);
 }
 
 function clearError(){
@@ -375,7 +412,12 @@ function clean_modal(){
             $('#item_uom_modal').val('');
             $('#primary_id').val('');
             $('#quantity_modal').val('');
+            $('#volume_modal').val('');
+            $('#weight_modal').val('');
             $('#subtotal_modal').val('');
+            $('#tax_modal').val('');
+            $('#taxtotal_modal').val('');
+            $('#total_modal').val('');
             $('#item_name_modal').select2().val(null).trigger("change");
             $('#item_id_modal').select2().val(null).trigger("change");
 }
@@ -579,8 +621,11 @@ $('#supplier').on('select2:select', function (e) {
             $('#item_name').val(data.item_name);
             $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
+            $('#volume_modal').val(data.volume);
+            $('#weight_modal').val(data.weight);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
+            $('#total_modal').val('');
         },
         error: function(error){
           console.log('error');
@@ -602,8 +647,11 @@ $('#item_id_modal').on('select2:select', function (e) {
             $('#item_name').val(data.item_name);
             $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
+            $('#volume_modal').val(data.volume);
+            $('#weight_modal').val(data.weight);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
+            $('#total_modal').val('');
         },
         error: function(error){
           console.log('error');
@@ -651,7 +699,7 @@ $("#quantity_modal" ).change(function() {
   var tax = $('#tax_modal').val();
   var price = $('#unit_price_modal').val().replace(/,/g, '');
   var subtotal = quantity*price;
-  var taxtotal = subtotal*tax;
+  var taxtotal = (subtotal*tax)/100;
   var total = subtotal+taxtotal;
 
   $('#subtotal_modal').val(subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -680,7 +728,13 @@ $('#modal_add_close').on('click', function (event) {
   var uom_item = $('#item_uom_modal').val();
   var item_price = $('#unit_price_modal').val();
   var subtotal_table = $('#subtotal_modal').val();
-  var subtotal = $('#subtotal_modal').val().replace(/,/g, '');
+  var taxtotal_table = $('#taxtotal_modal').val();
+  var tax_modal = $('#tax_modal').val();
+  var volume_modal = $('#volume_modal').val();
+  var weight_modal = $('#weight_modal').val();
+  var total_volume = Math.round((volume_modal*quantity) * 100.0) / 100.0;
+  var total_weight = Math.round((weight_modal*quantity) * 100.0) / 100.0;
+  var total = $('#total_modal').val();
 
    Pace.restart();
    
@@ -691,21 +745,34 @@ $('#modal_add_close').on('click', function (event) {
                    data:form_data,
                    success: function(data) {
                     $('#modal-default').modal('hide');
+
+                    var id = $('#purchase_order_table_tbody').children('tr').length + 1;
+
                      var html = '';
                       html += '<tr>';
-                      html += '<td><input type="text" class="form-control" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
-                      html += '<td><input type="text" class="form-control" value="'+item_name+'" hidden>'+item_name+'</td>';
-                      html += '<td><input type="text" class="form-control" name="row_quantity[]" value="'+quantity+'" hidden>'+quantity+'</td>';
-                      html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
-                      html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
-                      html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+' %</td>';
-                      html += '<td class="row_subtotal">'+subtotal_table+'<input type="text" class="form-control" name="row_subtotal[]" value="'+subtotal+'" hidden></td>';
-                      html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
+                      html += '<td><input type="text" class="form-control" id="id_'+id+'" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
+                          html += '<td><input type="text" class="form-control" value="'+item_name+'" hidden>'+item_name+'</td>';
+                          html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
+                          html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
+                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
+                          html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
+                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
+                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total+'" hidden></td>';
+                          html += '<td class="row_volume" style="display:none;"><span id="total_volume_td_'+id+'">'+total_volume+'</span><<input type="text" class="form-control" id="total_volume_'+id+'" name="row_total_volume[]" value="'+total_volume+'" hidden></td>';
+                          html += '<td class="row_weight" style="display:none;"><span id="total_weight_td_'+id+'">'+total_weight+'</span><input type="text" class="form-control" id="total_weight_'+id+'" name="row_total_weight[]" value="'+total_weight+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" id="volume_'+id+'" name="row_volume[]" value="'+volume_modal+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" id="weight_'+id+'" name="row_weight[]" value="'+weight_modal+'" hidden></td>';
+                          html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                       html += '</tr>';
 
                       $('#purchase_order_table').prepend(html);
 
                       get_total();
+                      get_subtotal();
+                      get_weight_total();
+                      get_volume_total();
+                      get_tax();
                       clean_modal();
                       clearError();
                    },
@@ -721,11 +788,8 @@ $('#modal_add_close').on('click', function (event) {
                    }
                }); 
    });  
-
-           
-
-
 });
+
 
 
 $('#modal_add_new').on('click', function (event) {
@@ -741,7 +805,14 @@ $('#modal_add_new').on('click', function (event) {
   var uom_item = $('#item_uom_modal').val();
   var item_price = $('#unit_price_modal').val();
   var subtotal_table = $('#subtotal_modal').val();
-  var subtotal = $('#subtotal_modal').val().replace(/,/g, '');
+  var taxtotal_table = $('#taxtotal_modal').val();
+  var tax_modal = $('#tax_modal').val();
+  var volume_modal = $('#volume_modal').val();
+  var weight_modal = $('#weight_modal').val();
+  var total_volume = Math.round((volume_modal*quantity) * 100.0) / 100.0;
+  var total_weight = Math.round((weight_modal*quantity) * 100.0) / 100.0;
+  var total = $('#total_modal').val();
+
 
       Pace.restart();
    
@@ -751,21 +822,34 @@ $('#modal_add_new').on('click', function (event) {
                        type: "post",
                        data:form_data,
                        success: function(data) {
+
+                         var id = $('#purchase_order_table_tbody').children('tr').length + 1;
+
                          var html = '';
                           html += '<tr>';
-                          html += '<td><input type="text" class="form-control" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
+                          html += '<td><input type="text" class="form-control" id="id_'+id+'" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
                           html += '<td><input type="text" class="form-control" value="'+item_name+'" hidden>'+item_name+'</td>';
-                          html += '<td><input type="text" class="form-control" name="row_quantity[]" value="'+quantity+'" hidden>'+quantity+'</td>';
+                          html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
                           html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
-                          html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
-                          html += '<td><input type="text" class="form-control" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+' %</td>';
-                          html += '<td class="row_subtotal">'+subtotal_table+'<input type="text" class="form-control" name="row_subtotal[]" value="'+subtotal+'" hidden></td>';
+                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
+                          html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
+                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
+                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total+'" hidden></td>';
+                          html += '<td class="row_volume" style="display:none;"><span id="total_volume_td_'+id+'">'+total_volume+'</span><<input type="text" class="form-control" id="total_volume_'+id+'" name="row_total_volume[]" value="'+total_volume+'" hidden></td>';
+                          html += '<td class="row_weight" style="display:none;"><span id="total_weight_td_'+id+'">'+total_weight+'</span><input type="text" class="form-control" id="total_weight_'+id+'" name="row_total_weight[]" value="'+total_weight+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" id="volume_'+id+'" name="row_volume[]" value="'+volume_modal+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" id="weight_'+id+'" name="row_weight[]" value="'+weight_modal+'" hidden></td>';
                           html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                           html += '</tr>';
 
                           $('#purchase_order_table').prepend(html);
 
                           get_total();
+                          get_subtotal();
+                          get_weight_total();
+                          get_volume_total();
+                          get_tax();
                           clean_modal();
                           clearError();
                        },
@@ -781,6 +865,52 @@ $('#modal_add_new').on('click', function (event) {
                        }
                    }); 
        });  
+
+});
+
+$(document).on('change', '#quantity', function(){
+
+  
+  event.preventDefault();
+
+  var quantity = $(this).val();
+  var id = $(this).data().id;
+  
+  var item_price = $('#price_'+id).val().replace(/,/g, '');;
+  var volume_modal = $('#volume_'+id).val();
+  var weight_modal = $('#weight_'+id).val();
+  var total_volume = Math.round((volume_modal*quantity) * 100.0) / 100.0;
+  var total_weight = Math.round((weight_modal*quantity) * 100.0) / 100.0;
+  var subtotal_table = $('#subtotal_table_'+id).val();
+  var taxtotal_table = $('#taxtotal_table_'+id).val();
+  var tax_modal = $('#tax_'+id).val();
+  var total = $('#total_table_'+id).val();
+
+ 
+  var new_subtotal = quantity*item_price;
+
+  var new_taxtotal = (new_subtotal*tax_modal)/100;
+
+  var new_total = new_subtotal+new_taxtotal;
+  
+  $('#subtotal_table_'+id).val(new_subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  $('#subtotal_table_td_'+id).text(new_subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+  $('#taxtotal_table_td_'+id).text(new_taxtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  $('#taxtotal_table_'+id).val(new_taxtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+  $('#total_table_'+id).val(new_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  $('#total_table_td_'+id).text(new_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+  $('#total_volume_td_'+id).text(total_volume);
+  $('#total_weight_td_'+id).text(total_weight);
+
+
+   get_total();
+   get_subtotal();
+   get_weight_total();
+   get_volume_total();
+   get_tax();
 
 });
 
@@ -953,6 +1083,10 @@ $('#nav_po_view').on('click', function (event) {
 $(document).on('click', '#remove_table_item', function(){
      $(this).closest('tr').remove();
      get_total();
+     get_subtotal();
+     get_weight_total();
+     get_volume_total();
+     get_tax();
 });
 
 $(document).on('click','#submit',function(event){
@@ -969,6 +1103,10 @@ $(document).on('click','#submit',function(event){
                         data:form_data
                         + "&purchase_order_id=" + $('#purchase_order_id').text()
                         + "&transaction_id=" + $('#transaction_id').text()
+                        + "&total_volume=" + $('#volume_total').text()
+                        + "&total_weight=" + $('#weight_total').text()
+                        + "&total_tax=" + $('#tax').text().replace(/,/g, '')
+                        + "&subtotal=" + $('#subtotal').text().replace(/,/g, '')
                         + "&total=" + $('#total').text().replace(/,/g, ''),
                         success: function(data) {
 
@@ -988,7 +1126,7 @@ $(document).on('click','#submit',function(event){
                           $('#supplier').select2().val(null).trigger("change");
                           $('#supplier_id').val('');
                           $('#supplier_company').val('');
-                          $('#purchase_order_table > tbody  tr:not(:last)').remove();
+                          $('#purchase_order_table > tbody  tr').remove();
 
                         },
                         error: function(error){
@@ -1153,13 +1291,15 @@ $(document).on('click', '#table_cancel', function(){
                                         <th>Name</th>
                                         <th>Quantity</th>
                                         <th>UOM(Item)</th>
-                                        <th>Item Price</th>
+                                        <th>Price</th>
+                                        <th>Line Total</th>
                                         <th>Tax Rate</th>
+                                        <th>Tax Total</th>
                                         <th>Sub Total</th>
                                         <th></th>
                                       </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="purchase_order_table_tbody">
                                       <!-- <tr>
                                         <th colspan="5" style="text-align:right">Total:</th>
                                         <th colspan="7" style="text-align:center">
@@ -1182,7 +1322,7 @@ $(document).on('click', '#table_cancel', function(){
                         <div class="col-lg-4" style="margin-top:25px;">
                           <div class="form-group">
                             <label>Comments</label>
-                            <textarea class="form-control" id="description" name="description" rows="5" placeholder="Details..."></textarea>
+                            <textarea class="form-control" id="comments" name="comments" rows="5" placeholder="Details..."></textarea>
                           </div>
                         </div>
                         <div class="col-lg-2">
@@ -1195,23 +1335,23 @@ $(document).on('click', '#table_cancel', function(){
                               <tbody>
                               <tr>
                                 <th style="width:50%">Total Volume(m&#179;):</th>
-                                <td>0</td>
+                                <td><span id="volume_total"></td>
                               </tr>
                               <tr>
                                 <th style="width:50%">Total Weight(kg):</th>
-                                <td>0</td>
-                              </tr>
-                              <tr>
-                                <th style="width:50%">Sub Total:</th>
-                                <td>0</td>
+                                <td><span id="weight_total"></td>
                               </tr>
                               <tr>
                                 <th>Tax Total:</th>
-                                <td>0</td>
+                                <td><span id="tax"><span></td>
                               </tr>
                               <tr>
-                                <th>Total:</th>
-                                <td><span id="total"><span></td>
+                              <tr>
+                                <th style="width:50%">Sub Total:</th>
+                                <td><span id="subtotal"></td>
+                              </tr>
+                                <th><h3>Total:</h3></th>
+                                <td><h3><span id="total"><span></h3></td>
                               </tr>
                             </tbody></table>
                           </div>
@@ -1572,6 +1712,8 @@ $(document).on('click', '#table_cancel', function(){
                       <label for="inputEmail3" class="col-sm-3 control-label">Sub Total</label>
                       <div class="col-sm-9">
                          <input type="text" class="form-control" id="subtotal_modal" name="subtotal_modal" placeholder="Sub Total" readonly>
+                         <input type="text" class="form-control" id="weight_modal" name="weight_modal" hidden>
+                         <input type="text" class="form-control" id="volume_modal" name="weight_modal" hidden>
                       </div>
                     </div>
                     <div class="form-group row" id="total_modal_this">

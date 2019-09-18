@@ -104,6 +104,8 @@ class PurchaseOrderController extends Controller
         return response()->json([
             'purchase_price'=> $item->purchase_price,
             'tax'=> $item->tax,
+            'volume'=> $item->cubic,
+            'weight'=> $item->weight,
             'id'=> $id,
             'item_id'=> $item->item_id,
             'item_name'=> $item->name,
@@ -124,6 +126,8 @@ class PurchaseOrderController extends Controller
         return response()->json([
             'purchase_price'=> $item->purchase_price,
             'tax'=> $item->tax,
+            'volume'=> $item->cubic,
+            'weight'=> $item->weight,
             'id'=> $get_id,
             'item_id'=> $item->item_id,
             'item_name'=> $item->name,
@@ -214,25 +218,44 @@ class PurchaseOrderController extends Controller
 
     public function store(Request $request)
     {
-     
+        
+    //    return $request->all();
         $this->validate($request,[
             'supplier_id' => 'required',
             'purchase_order_id' => 'required',
             'transaction_id' => 'required',
             'total' => 'required',
+            'subtotal' => 'required',
+            'total_volume' => 'required',
+            'total_weight' => 'required',
             'order_date' => 'required|min:1',
             'deliver_to' => 'required|min:1',
+
         ]);
 
-        if($request->row_item_price == null){
-            return response()->json(['error' => 'Invalid Input'], 422); // Status code here
-        }else if($request->row_subtotal == null){
-            return response()->json(['error' => 'Invalid Input'], 422); // Status code here
-        }else if($request->row_item_id == null){
-            return response()->json(['error' => 'Invalid Input'], 422); // Status code here
-        }else if($request->row_quantity == null){
-            return response()->json(['error' => 'Invalid Input'], 422); // Status code here
-        }
+        // if($request->row_item_price == null){
+        //     return response()->json(['error' => 'Invalid Input'], 422); // Status code here
+        // }else if($request->row_subtotal == null){
+        //     return response()->json(['error' => 'Invalid Input'], 422); // Status code here
+        // }else if($request->row_item_id == null){
+        //     return response()->json(['error' => 'Invalid Input'], 422); // Status code here
+        // }else if($request->row_quantity == null){
+        //     return response()->json(['error' => 'Invalid Input'], 422); // Status code here
+        // }
+
+
+        // row_item_id: ["21"]
+        // row_item_price: ["10,000"]
+        // row_line_total: ["14,440,000"]
+        // row_quantity: ["1444"]
+        // row_tax: ["5.37"]
+        // row_tax_total: ["775,428"]
+        // row_total: ["15,215,428"]
+        // row_total_volume: ["173.28"]
+        // row_total_weight: ["9025"]
+        // row_volume: ["0.12"]
+        // row_weight: ["6.25"]
+
 
         $purchase_order = new Purchase_Order;
         $purchase_order->purchase_order_id = $request->purchase_order_id;
@@ -240,9 +263,16 @@ class PurchaseOrderController extends Controller
         $purchase_order->supplier_id = $request->supplier_id;
         $purchase_order->order_date = $request->order_date;
         $purchase_order->deliver_to = $request->deliver_to;
-        $purchase_order->status = 'open';
+        $purchase_order->total_volume = $request->total_volume;
+        $purchase_order->total_weight = $request->total_weight;
+        $purchase_order->total_tax = $request->total_tax;
+        $purchase_order->status = 'Placed';
+        $purchase_order->subtotal = $request->subtotal;
         $purchase_order->total = $request->total;
+        $purchase_order->comments = $request->comments;
         $purchase_order->save();
+
+        return 'good';
 
         for($count = 0; $count < count($request->row_item_id); $count++)
          {  
@@ -422,7 +452,7 @@ class PurchaseOrderController extends Controller
         foreach ($purchase_order as $value) {
 
         
-         if($value->status == 'open'){
+         if($value->status == 'Placed'){
              $action = '<button class="btn btn-primary table_print" id="table_print" data-id="'.$value->purchase_order_id.'" style="color:white;"><i class="fas fa-print"></i></button>
              <button class="btn btn-success table_view" id="table_view" data-id="'.$value->purchase_order_id.'" style="color:white;"><i class="far fa-eye"></i></button>
              <button class="btn btn-warning table_cancel" id="table_cancel" data-id="'.$value->purchase_order_id.'" style="color:white;"><i class="fas fa-ban"></i></button>
