@@ -28,7 +28,8 @@ class ItemController extends Controller
             'item_id'=> $item->item_id,
             'default_purchase_price'=> $item->default_purchase_price,
             'name'=> $item->name,
-            'low_stock'=> $item->low_stock,
+            'max_stock'=> $item->max_stock,
+            'min_stock'=> $item->min_stock,
             'weight'=> $item->weight,
             'description'=> $item->description,
             ]);
@@ -122,25 +123,11 @@ class ItemController extends Controller
         return json_encode($json_data);
     }
 
-    public function api_selected_weight_uom($id)
-    {
-        $items = Item::findOrFail($id);
-
-        $selected_uom_weight = $items->weight_uom_id;  
-
-        
-        $json_data = array(
-          "data" => $selected_uom_weight,  
-        );
-
-        return json_encode($json_data);
-    }
-
     public function api_selected_item_uom($id)
     {
         $items = Item::findOrFail($id);
 
-        $selected_uom_item = $items->item_uom_id;  
+        $selected_uom_item = $items->item_uom;  
 
         $json_data = array(
           "data" => $selected_uom_item,  
@@ -197,14 +184,14 @@ class ItemController extends Controller
             'width' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'length' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'depth' => 'required|regex:/^\d*(\.\d{1,2})?$/',
-            'cubic' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'volume' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
             'type' => 'required|max:255',
-            'low_stock' => 'required|integer|min:1',
+            'min_stock' => 'required|integer|min:1',
+            'max_stock' => 'required|integer|min:1',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
-            'weight_uom' => 'required',
             'weight' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'description' => 'max:255',
             'photo' => 'image|max:5000',
@@ -228,11 +215,11 @@ class ItemController extends Controller
         $item->sale_price =  $request->sale_price;
         $item->name = $request->name;
         $item->type = $request->type;
-        $item->low_stock = $request->low_stock;
-        $item->item_uom_id = $request->item_uom;
-        $item->weight_uom_id = $request->weight_uom;
+        $item->max_stock = $request->max_stock;
+        $item->min_stock = $request->min_stock;
+        $item->item_uom = $request->item_uom;
         $item->weight = $request->weight;
-        $item->cubic = $request->cubic;
+        $item->volume = $request->volume;
         $item->tax = $request->tax;
         $item->description = $request->description;
         $item->photo = $filePath;
@@ -290,14 +277,14 @@ class ItemController extends Controller
             'width' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'length' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'depth' => 'required|regex:/^\d*(\.\d{1,2})?$/',
-            'cubic' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'volume' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'category_id' => 'required|max:255',
             'name' => 'required|max:255',
             'type' => 'required|max:255',
-            'low_stock' => 'required|integer|min:1',
+            'min_stock' => 'required|integer|min:1',
+            'max_stock' => 'required|integer|min:1',
             'supplier' => 'required',
             'item_uom' => 'required|max:255',
-            'weight_uom' => 'required',
             'weight' => 'required|regex:/^\d*(\.\d{1,2})?$/',
             'description' => 'max:255',
         ]);
@@ -309,12 +296,12 @@ class ItemController extends Controller
         $item->name = $request->name;
         $item->purchase_price =  $request->purchase_price;
         $item->sale_price =  $request->sale_price;
-        $item->low_stock = $request->low_stock;
-        $item->item_uom_id = $request->item_uom;
-        $item->weight_uom_id = $request->weight_uom;
+        $item->max_stock = $request->max_stock;
+        $item->min_stock = $request->min_stock;
+        $item->item_uom = $request->item_uom;
         $item->weight = $request->weight;
         $item->description = $request->description;
-        $item->cubic = $request->cubic;
+        $item->volume = $request->volume;
         $item->tax = $request->tax;
         $item->update();
                    

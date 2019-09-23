@@ -19,7 +19,6 @@ $(document).ready(function(){
   get_supplier_list();
   get_category_list();
   get_item_uom_list();
-  get_weight_uom_list();
   // get_supplier_id();;
 
   $.ajaxSetup({
@@ -84,26 +83,6 @@ $(document).ready(function(){
      }); 
   }
 
-  function get_weight_uom_list(){
-    $.ajax({
-        type: 'get',
-        url: "{{ route('uom.api_weight_uom_list') }}",
-        success: function(data) {
-
-        JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
-            $('#weight_uom').append(newOption).trigger('change');
-        })
-
-       $('.select2').select2().val(null).trigger("change");
-
-        },
-        error: function(error){
-          console.log('error');
-        }
-     }); 
-  }
-
   function get_item_uom_list(){
     $.ajax({
         type: 'get',
@@ -111,7 +90,7 @@ $(document).ready(function(){
         success: function(data) {
 
         JSON.parse(data).data.forEach(row => {
-            var newOption = new Option(row.name, row.id, false, false);
+            var newOption = new Option(row.name, row.acronym, false, false);
             $('#item_uom').append(newOption).trigger('change');
         })
         
@@ -150,9 +129,9 @@ $(document).ready(function(){
     var length = $('#length').val();
     var width = $('#width').val();
     var depth = $('#depth').val();
-    var cubic = length*width*depth;
+    var volume = length*width*depth;
 
-    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+    $('#volume').val(Math.round(volume * 100.0) / 100.0);
 
   });
 
@@ -160,9 +139,9 @@ $(document).ready(function(){
     var length = $('#length').val();
     var width = $('#width').val();
     var depth = $('#depth').val();
-    var cubic = length*width*depth;
+    var volume = length*width*depth;
 
-    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+    $('#volume').val(Math.round(volume * 100.0) / 100.0);
 
   });
 
@@ -171,9 +150,9 @@ $(document).ready(function(){
     var length = $('#length').val();
     var width = $('#width').val();
     var depth = $('#depth').val();
-    var cubic = length*width*depth;
+    var volume = length*width*depth;
 
-    $('#cubic').val(Math.round(cubic * 100.0) / 100.0);
+    $('#volume').val(Math.round(volume * 100.0) / 100.0);
 
   });
 
@@ -291,16 +270,8 @@ $(document).ready(function(){
                   <div class="row">
                 <div class="col-md-6">
                       <div class="form-group" id="weight_this">
-                          <label for="name">Weight</label>
+                          <label for="name">Weight <small>(Kilogram)</small></label>
                           <input type="text" class="form-control" id="weight" name="weight" placeholder="Weight">
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                    <div class="form-group" id="weight_uom_this">
-                    <a href="{{ route('uom.index' )}}" class="btn btn-primary btn-sm float-right"><i class="nav-icon fas fa-plus" style="color:white;"></i></a>  
-                        <label>UOM <small>(Weight)</small></label>
-                          <select class="select2" id="weight_uom" name="weight_uom" data-placeholder="UOM" style="width: 100%;">
-                          </select>
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -324,13 +295,19 @@ $(document).ready(function(){
                     <div class="col-md-6">
                       <div class="form-group" id="cubic_this">
                           <label>Cubic Total <small>(Meter)</small></label>
-                          <input type="text" class="form-control" id="cubic" name="cubic" placeholder="Cubic" readonly>
+                          <input type="text" class="form-control" id="volume" name="volume" placeholder="Cubic" readonly>
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group" id="low_stock_this">
-                          <label for="name">Low Stock <small>(Alert Qty)</small></label>
-                          <input type="text" class="form-control" id="low_stock" name="low_stock" placeholder="Qty">
+                          <label for="name">Minimum Stock <small>(Qty)</small></label>
+                          <input type="text" class="form-control" id="min_stock" name="min_stock" placeholder="Qty">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group" id="low_stock_this">
+                          <label for="name">Maximum Stock <small>(Qty)</small></label>
+                          <input type="text" class="form-control" id="max_stock" name="max_stock" placeholder="Qty">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -347,13 +324,13 @@ $(document).ready(function(){
                     <div class="row">
                       <div class="col-md-6">
                           <div class="form-group" id="purchase_price_this">
-                              <label for="name">Purchase Price</small></label>
+                              <label for="name">Default Purchase Price</small></label>
                               <input type="text" class="form-control" id="purchase_price" name="purchase_price" placeholder="Unit Price">
                           </div>
                       </div>
                       <div class="col-md-6">
                           <div class="form-group" id="sale_price_this">
-                              <label for="name">Sale Price</small></label>
+                              <label for="name">Default Sale Price</small></label>
                               <input type="text" class="form-control" id="sale_price" name="sale_price" placeholder="Unit Price">
                           </div>
                       </div>

@@ -15,6 +15,7 @@ class CreateReceivingDamageItemTable extends Migration
     {
         Schema::create('receiving_damage_item', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('purchase_order_item_id');
             $table->string('receiving_id');
             $table->string('item_id');
             $table->integer('quantity');

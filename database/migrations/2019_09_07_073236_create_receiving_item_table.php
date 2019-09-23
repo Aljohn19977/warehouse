@@ -15,9 +15,12 @@ class CreateReceivingItemTable extends Migration
     {
         Schema::create('receiving_item', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('purchase_order_item_id');
             $table->string('receiving_id');
             $table->string('item_id');
+            $table->string('status')->nullable();
             $table->integer('quantity');
+            $table->integer('price');
             $table->timestamps();
         });
     }

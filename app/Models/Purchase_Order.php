@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Purchase_Order_Item;
+use App\Models\Receiving;
 use App\Models\Supplier;
 use App\Models\Company;
 
@@ -28,6 +29,10 @@ class Purchase_Order extends Model
 
     public function supplier(){
         return $this->belongsTo(Supplier::Class);
+    }
+
+    public function receiving(){
+        return $this->belongsTo(Receiving::Class,'transaction_id','transaction_id');
     }
 
 }

@@ -20,9 +20,9 @@ class CreateItemsTable extends Migration
             $table->string('type');
             $table->string('name');
             $table->string('weight');
-            $table->integer('weight_uom_id');
-            $table->integer('low_stock');
-            $table->integer('item_uom_id');
+            $table->integer('min_stock');
+            $table->integer('max_stock');
+            $table->string('item_uom');
             $table->string('purchase_price');
             $table->string('sale_price');
             $table->string('cubic');

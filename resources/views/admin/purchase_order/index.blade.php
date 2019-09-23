@@ -438,7 +438,12 @@ function print_email_po(id){
             $('#nav2_supplier_company').val(data.supplier_company);
             $('#nav2_supplier_name').val(data.supplier_name);
             $('#nav2total').text(data.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-            $('#nav2purchase_order_table > tbody tr:not(:last)').remove();
+            $('#nav2comments').text(data.comments);
+            $('#nav2subtotal').text(data.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav2tax').text(data.total_tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav2weight_total').text(data.total_weight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav2volume_total').text(data.total_volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav2purchase_order_table  > tbody tr').remove();
 
 
               $("#email_po").removeAttr("disabled");
@@ -452,6 +457,9 @@ function print_email_po(id){
                           html += '<td>'+value.quantity+'</td>';
                           html += '<td>'+value.item_uom+'</td>';
                           html += '<td>'+value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.line_total+'</td>';
+                          html += '<td>'+value.tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.tax_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '</tr>';
 
@@ -486,7 +494,12 @@ function cancel_po(id){
             $('#nav3_supplier_company').val(data.supplier_company);
             $('#nav3_supplier_name').val(data.supplier_name);
             $('#nav3total').text(data.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-            $('#nav3purchase_order_table > tbody tr:not(:last)').remove();
+            $('#nav3comments').text(data.comments);
+            $('#nav3subtotal').text(data.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav3tax').text(data.total_tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav3weight_total').text(data.total_weight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav3volume_total').text(data.total_volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav3purchase_order_table  > tbody tr').remove();
 
 
             $.each(data.purchase_order_items, function(key, value){                         
@@ -498,6 +511,9 @@ function cancel_po(id){
                           html += '<td>'+value.quantity+'</td>';
                           html += '<td>'+value.item_uom+'</td>';
                           html += '<td>'+value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.line_total+'</td>';
+                          html += '<td>'+value.tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.tax_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '</tr>';
 
@@ -531,17 +547,23 @@ function view_po(id){
             $('#nav4_supplier_company').val(data.supplier_company);
             $('#nav4_supplier_name').val(data.supplier_name);
             $('#status_icon').remove();
-            if(data.status == 'open'){
-              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-success">Open</button>');
-            }else if (data.status =='closed'){
-              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-warning">Closed</button>');
+            if(data.status == 'Placed'){
+              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-success">Placed</button>');
+            }else if (data.status =='Recieved'){
+              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-warning">Recieved</button>');
             }else if(data.status == 'canceled'){
               $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-danger">Canceled</button> ');
             }
 
          
             $('#nav4total').text(data.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-            $('#nav4purchase_order_table > tbody tr:not(:last)').remove();
+            $('#nav4comments').text(data.comments);
+            $('#nav4subtotal').text(data.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav4tax').text(data.total_tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav4weight_total').text(data.total_weight.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#nav4volume_total').text(data.total_volume.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+            $('#nav4purchase_order_table  > tbody tr').remove();
 
 
             $.each(data.purchase_order_items, function(key, value){                         
@@ -553,6 +575,9 @@ function view_po(id){
                           html += '<td>'+value.quantity+'</td>';
                           html += '<td>'+value.item_uom+'</td>';
                           html += '<td>'+value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.line_total+'</td>';
+                          html += '<td>'+value.tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                          html += '<td>'+value.tax_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '</tr>';
 
@@ -587,7 +612,7 @@ $('#supplier').on('select2:select', function (e) {
             $('#item_id_modal option').remove();
             $("#add_item").removeAttr('disabled');
 
-            $('#purchase_order_table > tbody tr:not(:last)').remove();
+            $('#purchase_order_table  > tbody tr ').remove();
             $('#total').text(0);
 
             $.each(data.supplier_item, function(key, value){                         
@@ -622,6 +647,7 @@ $('#supplier').on('select2:select', function (e) {
             $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
             $('#volume_modal').val(data.volume);
+            $('#type_modal').val(data.type);
             $('#weight_modal').val(data.weight);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
@@ -648,6 +674,7 @@ $('#item_id_modal').on('select2:select', function (e) {
             $('#tax_modal').val(data.tax);
             $('#primary_id').val(data.id);
             $('#volume_modal').val(data.volume);
+            $('#type_modal').val(data.type);
             $('#weight_modal').val(data.weight);
             $('#quantity_modal').val('');
             $('#subtotal_modal').val('');
@@ -731,6 +758,7 @@ $('#modal_add_close').on('click', function (event) {
   var taxtotal_table = $('#taxtotal_modal').val();
   var tax_modal = $('#tax_modal').val();
   var volume_modal = $('#volume_modal').val();
+  var type_modal = $('#type_modal').val();
   var weight_modal = $('#weight_modal').val();
   var total_volume = Math.round((volume_modal*quantity) * 100.0) / 100.0;
   var total_weight = Math.round((weight_modal*quantity) * 100.0) / 100.0;
@@ -753,8 +781,8 @@ $('#modal_add_close').on('click', function (event) {
                       html += '<td><input type="text" class="form-control" id="id_'+id+'" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
                           html += '<td><input type="text" class="form-control" value="'+item_name+'" hidden>'+item_name+'</td>';
                           html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
-                          html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
-                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                          html += '<td><input type="text" class="form-control" name="row_item_uom[]" value="'+uom_item+'" hidden>'+uom_item+'</td>';
+                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price.replace(/,/g, '')+'" hidden>'+item_price+'</td>';
                           html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
                           html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
                           html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
@@ -763,6 +791,7 @@ $('#modal_add_close').on('click', function (event) {
                           html += '<td class="row_weight" style="display:none;"><span id="total_weight_td_'+id+'">'+total_weight+'</span><input type="text" class="form-control" id="total_weight_'+id+'" name="row_total_weight[]" value="'+total_weight+'" hidden></td>';
                           html += '<td style="display:none;"><input type="text" class="form-control" id="volume_'+id+'" name="row_volume[]" value="'+volume_modal+'" hidden></td>';
                           html += '<td style="display:none;"><input type="text" class="form-control" id="weight_'+id+'" name="row_weight[]" value="'+weight_modal+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" name="row_type[]" value="'+type_modal+'" hidden></td>';
                           html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                       html += '</tr>';
 
@@ -808,6 +837,7 @@ $('#modal_add_new').on('click', function (event) {
   var taxtotal_table = $('#taxtotal_modal').val();
   var tax_modal = $('#tax_modal').val();
   var volume_modal = $('#volume_modal').val();
+  var type_modal = $('#type_modal').val();
   var weight_modal = $('#weight_modal').val();
   var total_volume = Math.round((volume_modal*quantity) * 100.0) / 100.0;
   var total_weight = Math.round((weight_modal*quantity) * 100.0) / 100.0;
@@ -830,16 +860,17 @@ $('#modal_add_new').on('click', function (event) {
                           html += '<td><input type="text" class="form-control" id="id_'+id+'" name="row_item_id[]" value="'+item_id+'" hidden>'+item_id_modal+'</td>';
                           html += '<td><input type="text" class="form-control" value="'+item_name+'" hidden>'+item_name+'</td>';
                           html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
-                          html += '<td><input type="text" class="form-control" value="'+uom_item+'" hidden>'+uom_item+'</td>';
-                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price+'" hidden>'+item_price+'</td>';
+                          html += '<td><input type="text" class="form-control" name="row_item_uom[]" value="'+uom_item+'" hidden>'+uom_item+'</td>';
+                          html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price.replace(/,/g, '')+'" hidden>'+item_price+'</td>';
                           html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
                           html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
-                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
-                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total+'" hidden></td>';
+                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table.replace(/,/g, '')+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
+                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total.replace(/,/g, '')+'" hidden></td>';
                           html += '<td class="row_volume" style="display:none;"><span id="total_volume_td_'+id+'">'+total_volume+'</span><<input type="text" class="form-control" id="total_volume_'+id+'" name="row_total_volume[]" value="'+total_volume+'" hidden></td>';
                           html += '<td class="row_weight" style="display:none;"><span id="total_weight_td_'+id+'">'+total_weight+'</span><input type="text" class="form-control" id="total_weight_'+id+'" name="row_total_weight[]" value="'+total_weight+'" hidden></td>';
                           html += '<td style="display:none;"><input type="text" class="form-control" id="volume_'+id+'" name="row_volume[]" value="'+volume_modal+'" hidden></td>';
                           html += '<td style="display:none;"><input type="text" class="form-control" id="weight_'+id+'" name="row_weight[]" value="'+weight_modal+'" hidden></td>';
+                          html += '<td style="display:none;"><input type="text" class="form-control" name="row_type[]" value="'+type_modal+'" hidden></td>';
                           html += '<td><button class="btn btn-sm btn-default" id="remove_table_item"><i class="fas fa-times"></i></button></td>';
                           html += '</tr>';
 
@@ -948,7 +979,12 @@ $('#cancel').on('click', function (event) {
                       $('#nav3_supplier_company').val('');
                       $('#nav3_supplier_name').val('');
                       $('#nav3total').text(0);
-                      $('#nav3purchase_order_table > tbody tr:not(:last)').remove();
+                      $('#nav3comments').text(0);
+                      $('#nav3subtotal').text(0);
+                      $('#nav3tax').text(0);
+                      $('#nav3weight_total').text(0);
+                      $('#nav3volume_total').text(0);
+                      $('#nav3purchase_order_table  > tbody tr').remove();
 
                       Swal.fire(
                         'Canceled!',
@@ -973,6 +1009,10 @@ $('#cancel').on('click', function (event) {
 
 $('#nav_po_create').on('click', function (event) {
 
+  
+  get_purchase_order_cancel_list();
+  get_purchase_order_print_list();
+  get_purchase_order_view_list();
   $('#nav2_purchase_order_no').select2().val(null).trigger("change");
   $('#nav2_transaction_no').select2().val(null).trigger("change");
   $('#nav3_purchase_order_no').select2().val(null).trigger("change");
@@ -985,21 +1025,32 @@ $('#nav_po_create').on('click', function (event) {
   $('#nav2_supplier_company').val('');
   $('#nav2_supplier_name').val('');
   $('#nav2total').text(0);
-  $('#nav2purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav2subtotal').text(0);
+  $('#nav2tax').text(0);
+  $('#nav2weight_total').text(0);
+  $('#nav2volume_total').text(0);
+  $('#nav2comments').text('');
+  $('#nav2purchase_order_table  > tbody tr').remove();
   $('#nav3_order_date').val('');
   $('#nav3_deliver_to').val('');
   $('#nav3_supplier_id').val('');
   $('#nav3_supplier_company').val('');
   $('#nav3_supplier_name').val('');
   $('#nav3total').text(0);
-  $('#nav3purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav3comments').text('');
+  $('#nav3purchase_order_table  > tbody tr').remove();
   $('#nav4_order_date').val('');
   $('#nav4_deliver_to').val('');
   $('#nav4_supplier_id').val('');
   $('#nav4_supplier_company').val('');
   $('#nav4_supplier_name').val('');
   $('#nav4total').text(0);
-  $('#nav4purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav4subtotal').text(0);
+  $('#nav4tax').text(0);
+  $('#nav4weight_total').text(0);
+  $('#nav4volume_total').text(0);
+  $('#nav4comments').text('');
+  $('#nav4purchase_order_table  > tbody tr').remove();
   $("#email_po").attr("disabled", "disabled");
   $("#print_po").attr("disabled", "disabled");
   $("#cancel").attr("disabled", "disabled");
@@ -1007,6 +1058,10 @@ $('#nav_po_create').on('click', function (event) {
 });
 
 $('#nav_print_email_po').on('click', function (event) {
+
+  get_purchase_order_cancel_list();
+  get_purchase_order_print_list();
+  get_purchase_order_view_list();
   $('#nav3_purchase_order_no').select2().val(null).trigger("change");
   $('#nav3_transaction_no').select2().val(null).trigger("change");
   $('#nav4_purchase_order_no').select2().val(null).trigger("change");
@@ -1017,20 +1072,33 @@ $('#nav_print_email_po').on('click', function (event) {
   $('#nav3_supplier_company').val('');
   $('#nav3_supplier_name').val('');
   $('#nav3total').text(0);
-  $('#nav3purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav3subtotal').text(0);
+  $('#nav3tax').text(0);
+  $('#nav3weight_total').text(0);
+  $('#nav3volume_total').text(0);
+  $('#nav3comments').text('');
+  $('#nav3purchase_order_table  > tbody tr').remove();
   $('#nav4_order_date').val('');
   $('#nav4_deliver_to').val('');
   $('#nav4_supplier_id').val('');
   $('#nav4_supplier_company').val('');
   $('#nav4_supplier_name').val('');
   $('#nav4total').text(0);
-  $('#nav4purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav4subtotal').text(0);
+  $('#nav4tax').text(0);
+  $('#nav4weight_total').text(0);
+  $('#nav4volume_total').text(0);
+  $('#nav4comments').text('');
+  $('#nav4purchase_order_table  > tbody tr').remove();
   $("#cancel").attr("disabled", "disabled");
 
 });
 
 $('#nav_po_cancel').on('click', function (event) {
 
+  get_purchase_order_cancel_list();
+  get_purchase_order_print_list();
+  get_purchase_order_view_list();
   $('#nav2_purchase_order_no').select2().val(null).trigger("change");
   $('#nav2_transaction_no').select2().val(null).trigger("change");
   $('#nav4_purchase_order_no').select2().val(null).trigger("change");
@@ -1041,14 +1109,24 @@ $('#nav_po_cancel').on('click', function (event) {
   $('#nav4_supplier_company').val('');
   $('#nav4_supplier_name').val('');
   $('#nav4total').text(0);
-  $('#nav4purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav4subtotal').text(0);
+  $('#nav4tax').text(0);
+  $('#nav4weight_total').text(0);
+  $('#nav4volume_total').text(0);
+  $('#nav4comments').text('');
+  $('#nav4purchase_order_table  > tbody tr').remove();
   $('#nav2_order_date').val('');
   $('#nav2_deliver_to').val('');
   $('#nav2_supplier_id').val('');
   $('#nav2_supplier_company').val('');
   $('#nav2_supplier_name').val('');
   $('#nav2total').text(0);
-  $('#nav2purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav2subtotal').text(0);
+  $('#nav2tax').text(0);
+  $('#nav2weight_total').text(0);
+  $('#nav2volume_total').text(0);
+  $('#nav2comments').text('');
+  $('#nav2purchase_order_table  > tbody tr').remove();
   $("#email_po").attr("disabled", "disabled");
   $("#print_po").attr("disabled", "disabled");
 
@@ -1056,6 +1134,10 @@ $('#nav_po_cancel').on('click', function (event) {
 
 $('#nav_po_view').on('click', function (event) {
 
+
+  get_purchase_order_cancel_list();
+  get_purchase_order_print_list();
+  get_purchase_order_view_list();
   $('#nav2_purchase_order_no').select2().val(null).trigger("change");
   $('#nav2_transaction_no').select2().val(null).trigger("change");
   $('#nav3_purchase_order_no').select2().val(null).trigger("change");
@@ -1066,14 +1148,24 @@ $('#nav_po_view').on('click', function (event) {
   $('#nav2_supplier_company').val('');
   $('#nav2_supplier_name').val('');
   $('#nav2total').text(0);
-  $('#nav2purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav2subtotal').text(0);
+  $('#nav2tax').text(0);
+  $('#nav2weight_total').text(0);
+  $('#nav2volume_total').text(0);
+  $('#nav2comments').text('');
+  $('#nav2purchase_order_table  > tbody tr').remove();
   $('#nav3_order_date').val('');
   $('#nav3_deliver_to').val('');
   $('#nav3_supplier_id').val('');
   $('#nav3_supplier_company').val('');
   $('#nav3_supplier_name').val('');
   $('#nav3total').text(0);
-  $('#nav3purchase_order_table > tbody tr:not(:last)').remove();
+  $('#nav3subtotal').text(0);
+  $('#nav3tax').text(0);
+  $('#nav3weight_total').text(0);
+  $('#nav3volume_total').text(0);
+  $('#nav3comments').text('');
+  $('#nav3purchase_order_table  > tbody tr').remove();
   $("#email_po").attr("disabled", "disabled");
   $("#print_po").attr("disabled", "disabled");
   $("#cancel").attr("disabled", "disabled");
@@ -1126,7 +1218,13 @@ $(document).on('click','#submit',function(event){
                           $('#supplier').select2().val(null).trigger("change");
                           $('#supplier_id').val('');
                           $('#supplier_company').val('');
-                          $('#purchase_order_table > tbody  tr').remove();
+                          $('#purchase_order_table  > tbody tr  tr').remove();
+
+                            get_total();
+                            get_subtotal();
+                            get_weight_total();
+                            get_volume_total();
+                            get_tax();
 
                         },
                         error: function(error){
@@ -1318,45 +1416,58 @@ $(document).on('click', '#table_cancel', function(){
                         </div>
                       </div>
                       <div class="row">
-                        <!-- accepted payments column -->
-                        <div class="col-lg-4" style="margin-top:25px;">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
                           <div class="form-group">
                             <label>Comments</label>
                             <textarea class="form-control" id="comments" name="comments" rows="5" placeholder="Details..."></textarea>
                           </div>
                         </div>
-                        <div class="col-lg-2">
-
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-lg-6 col-md-12">
-                          <div class="table-responsive">
-                            <table class="table">
-                              <tbody>
-                              <tr>
-                                <th style="width:50%">Total Volume(m&#179;):</th>
-                                <td><span id="volume_total"></td>
-                              </tr>
-                              <tr>
-                                <th style="width:50%">Total Weight(kg):</th>
-                                <td><span id="weight_total"></td>
-                              </tr>
-                              <tr>
-                                <th>Tax Total:</th>
-                                <td><span id="tax"><span></td>
-                              </tr>
-                              <tr>
-                              <tr>
-                                <th style="width:50%">Sub Total:</th>
-                                <td><span id="subtotal"></td>
-                              </tr>
-                                <th><h3>Total:</h3></th>
-                                <td><h3><span id="total"><span></h3></td>
-                              </tr>
-                            </tbody></table>
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(m&#179;)</span>
+                                  <span class="info-box-number" id="volume_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(kg)</span>
+                                  <span class="info-box-number" id="weight_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-yellow">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Tax Total</span>
+                                  <span class="info-box-number" id="tax"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-red">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Sub Total</span>
+                                  <span class="info-box-number" id="subtotal"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-green">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total</span>
+                                  <span class="info-box-number" id="total"><span>
+                                </span></span></div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <!-- /.col -->
                       </div>
                       <div class="col-lg-12">
                         <button id="submit" class="btn btn-primary">Create</button>
@@ -1418,23 +1529,74 @@ $(document).on('click', '#table_cancel', function(){
                       <table class="table" id="nav2purchase_order_table">
                         <thead>
                           <tr>
-                            <th>Item ID</th>
-                            <th>Name</th>
-                            <th>Quantity</th>
-                            <th>UOM(Item)</th>
-                            <th>Item Price</th>
-                            <th>Sub Total</th>
+                              <th>Item ID</th>
+                              <th>Name</th>
+                              <th>Quantity</th>
+                              <th>UOM(Item)</th>
+                              <th>Price</th>
+                              <th>Line Total</th>
+                              <th>Tax Rate</th>
+                              <th>Tax Total</th>
+                              <th>Sub Total</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th colspan="5" style="text-align:right">Total:</th>
-                            <th colspan="7" style="text-align:center">
-                              <span id="nav2total">0</span>
-                            </th>
-                          </tr>
                         </tbody>
                       </table>
+                      <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="form-group">
+                            <label>Comments</label>
+                            <textarea class="form-control" id="nav2comments" name="nav2comments" rows="5" placeholder="Details..."></textarea>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(m&#179;)</span>
+                                  <span class="info-box-number" id="nav2volume_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(kg)</span>
+                                  <span class="info-box-number" id="nav2weight_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-yellow">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Tax Total</span>
+                                  <span class="info-box-number" id="nav2tax"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-red">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Sub Total</span>
+                                  <span class="info-box-number" id="nav2subtotal"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-green">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total</span>
+                                  <span class="info-box-number" id="nav2total"><span>
+                                </span></span></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <div class="col-lg-12">
                         <button id="print_po" class="btn btn-primary" disabled>Print PO</button>
                         <button id="email_po" class="btn btn-primary" disabled>Send PO via Email</button>
@@ -1494,23 +1656,74 @@ $(document).on('click', '#table_cancel', function(){
                       <table class="table" id="nav3purchase_order_table">
                         <thead>
                           <tr>
-                            <th>Item ID</th>
-                            <th>Name</th>
-                            <th>Quantity</th>
-                            <th>UOM(Item)</th>
-                            <th>Item Price</th>
-                            <th>Sub Total</th>
+                              <th>Item ID</th>
+                              <th>Name</th>
+                              <th>Quantity</th>
+                              <th>UOM(Item)</th>
+                              <th>Price</th>
+                              <th>Line Total</th>
+                              <th>Tax Rate</th>
+                              <th>Tax Total</th>
+                              <th>Sub Total</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th colspan="5" style="text-align:right">Total:</th>
-                            <th colspan="7" style="text-align:center">
-                              <span id="nav3total">0</span>
-                            </th>
-                          </tr>
                         </tbody>
                       </table>
+                      <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="form-group">
+                            <label>Comments</label>
+                            <textarea class="form-control" id="nav3comments" name="nav3comments" rows="5" placeholder="Details..."></textarea>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(m&#179;)</span>
+                                  <span class="info-box-number" id="nav3volume_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(kg)</span>
+                                  <span class="info-box-number" id="nav3weight_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-yellow">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Tax Total</span>
+                                  <span class="info-box-number" id="nav3tax"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-red">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Sub Total</span>
+                                  <span class="info-box-number" id="nav3subtotal"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-green">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total</span>
+                                  <span class="info-box-number" id="nav3total"><span>
+                                </span></span></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       <div class="col-lg-12">
                         <button id="cancel" class="btn btn-primary" disabled>Cancel Purchase Order</button>
                       </div>
@@ -1575,23 +1788,74 @@ $(document).on('click', '#table_cancel', function(){
                       <table class="table" id="nav4purchase_order_table">
                         <thead>
                           <tr>
-                            <th>Item ID</th>
-                            <th>Name</th>
-                            <th>Quantity</th>
-                            <th>UOM(Item)</th>
-                            <th>Item Price</th>
-                            <th>Sub Total</th>
+                              <th>Item ID</th>
+                              <th>Name</th>
+                              <th>Quantity</th>
+                              <th>UOM(Item)</th>
+                              <th>Price</th>
+                              <th>Line Total</th>
+                              <th>Tax Rate</th>
+                              <th>Tax Total</th>
+                              <th>Sub Total</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <th colspan="5" style="text-align:right">Total:</th>
-                            <th colspan="7" style="text-align:center">
-                              <span id="nav4total">0</span>
-                            </th>
-                          </tr>
                         </tbody>
                       </table>
+                      <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="form-group">
+                            <label>Comments</label>
+                            <textarea class="form-control" id="nav4comments" name="nav4comments" rows="5" placeholder="Details..."></textarea>
+                          </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6">
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(m&#179;)</span>
+                                  <span class="info-box-number" id="nav4volume_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-blue">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total Volume(kg)</span>
+                                  <span class="info-box-number" id="nav4weight_total"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-4">
+                              <div class="info-box bg-yellow">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Tax Total</span>
+                                  <span class="info-box-number" id="nav4tax"></span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-red">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Sub Total</span>
+                                  <span class="info-box-number" id="nav4subtotal"></span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-sm-12 col-md-12 col-lg-6">
+                              <div class="info-box bg-green">
+                                <div class="info-box-content">
+                                  <span class="info-box-text">Total</span>
+                                  <span class="info-box-number" id="nav4total"><span>
+                                </span></span></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 					</div>
           <!-- /.tab-pane -->                
           <div class="tab-pane" id="po_list">
@@ -1615,9 +1879,9 @@ $(document).on('click', '#table_cancel', function(){
                 <div class="form-group">
                     <select class="select2" id="filter_status" name="filter_status" data-placeholder="Filter Status" style="width: 100%;">
                     <option></option>
-                    <option value="open">Open</option>
-                    <option value="canceled" >Canceled</option>
-                    <option value="closed" >Closed</option>
+                    <option value="Placed">Placed</option>
+                    <option value="Canceled" >Canceled</option>
+                    <option value="Received" >Received</option>
                     </select>
                 </div>
               </div>
@@ -1713,7 +1977,8 @@ $(document).on('click', '#table_cancel', function(){
                       <div class="col-sm-9">
                          <input type="text" class="form-control" id="subtotal_modal" name="subtotal_modal" placeholder="Sub Total" readonly>
                          <input type="text" class="form-control" id="weight_modal" name="weight_modal" hidden>
-                         <input type="text" class="form-control" id="volume_modal" name="weight_modal" hidden>
+                         <input type="text" class="form-control" id="volume_modal" name="volume_modal" hidden>
+                         <input type="text" class="form-control" id="type_modal" name="type_modal" hidden>
                       </div>
                     </div>
                     <div class="form-group row" id="total_modal_this">

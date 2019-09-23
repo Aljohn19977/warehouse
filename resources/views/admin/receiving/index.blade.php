@@ -33,11 +33,105 @@ $('.select2').select2();
   });
 
 get_transaction_list();
+get_recieved_list();
+received_item_datatable();
+
+
+    var startDate;
+    var endDate;
+
+      $('#filter_date').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      },
+      ranges: {
+              'Today': [moment(), moment()],
+              'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+              'Last 7 Days': [moment().subtract('days', 6), moment()],
+              'Last 30 Days': [moment().subtract('days', 29), moment()],
+              'This Month': [moment().startOf('month'), moment().endOf('month')],
+              'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+              'Last Year': [moment().subtract('year', 1),moment().subtract('year', 1)]
+            },
+  });
+
+  $('#filter_date').val('');
+  
+  $('#filter_date').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+      startDate = picker.startDate.format('YYYY-MM-DD');
+      endDate = picker.endDate.format('YYYY-MM-DD');  
+  });
+
+  $('#filter_date').on('cancel.daterangepicker', function(ev, picker) {
+    $('#filter_date').val('');
+      startDate = null;
+      endDate = null;  
+  });
+
+
+function received_item_datatable(start_date,end_date,filter_type,filter_receiving_id){
+  $('#received_items_table').DataTable({
+              processing: true,
+              serverSide: true,
+              responsive: true,
+              paging: true,
+              lengthChange: true,
+              searching: true,
+              autoWidth: true,
+              ajax: {
+                      'url' : "{{ route('receiving.api_get_all_received_item')}}",
+                      'dataType' : 'json',
+                      'type' : 'post',
+                      'data' : {
+                                  'start_date' : start_date,
+                                  'end_date' : end_date,
+                                  'filter_type': filter_type,
+                                  'filter_receiving_id': filter_receiving_id
+                               } 
+              },
+                columns : [
+                            {"data" : "receiving_id"},
+                            {"data" : "item_id"},
+                            {"data" : "name"},
+                            {"data" : "quantity"},
+                            {"data" : "price"},
+                            {"data" : "item_uom"},
+                            {"data" : "type"},
+                            {"data" : "updated_at"},
+                            {"data" : "action"}
+                          ],
+
+  });
+}
+
+$('#filter').on('click', function (event) {
+
+event.preventDefault();
+
+var filter_type = $('#filter_type').val();
+var start_date = startDate;
+var end_date = endDate;
+var filter_receiving_id = $('#filter_receiving_no').val();
+
+if (start_date != null && end_date != null){
+  $('#received_items_table').DataTable().destroy();
+  received_item_datatable(start_date,end_date,filter_type,filter_receiving_id);
+  console.log(start_date+end_date);
+}else if(filter_type != '' ){
+  $('#received_items_table').DataTable().destroy();
+  received_item_datatable(start_date,end_date,filter_type,filter_receiving_id);
+}else if(filter_receiving_id != null ){
+  $('#received_items_table').DataTable().destroy();
+  received_item_datatable(start_date,end_date,filter_type,filter_receiving_id);
+}
+});
 
 function get_transaction_list(){
     $.ajax({
         type: 'get',
-        url: "/receiving/transaction/list/",
+        url: "/receiving/transaction/list",
         success: function(data) {
 
             $('#transaction_id option').remove();
@@ -65,6 +159,38 @@ function get_transaction_list(){
      }); 
 }
 
+function get_recieved_list(){
+    $.ajax({
+        type: 'get',
+        url: "/receiving/received/list",
+        success: function(data) {
+
+            $('#transaction_id_print_email_ro option').remove();
+
+
+            JSON.parse(data).data.forEach(row => {
+                var newOption = new Option(row.transaction_id, row.id, false, false);
+                $('#transaction_id_print_email_ro').append(newOption).trigger('change');
+            })
+
+            $('#transaction_id_print_email_ro').select2().val(null).trigger("change");
+
+            JSON.parse(data).data.forEach(row => {
+                var newOption = new Option(row.receiving_id, row.id, false, false);
+                $('#receiving_order_id_print_email_ro').append(newOption).trigger('change');
+            })
+
+            $('#receiving_order_id_print_email_ro').select2().val(null).trigger("change");
+            
+            
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+}
+
+
 $('#purchase_order_id').on('select2:select', function (e) {
     var modal_data = e.params.data;
     transaction_info(modal_data.id);
@@ -79,6 +205,21 @@ $('#transaction_id').on('select2:select', function (e) {
     $('#transaction_id').select2().val(modal_data.id).trigger("change");
 });
 
+$('#transaction_id_print_email_ro').on('select2:select', function (e) {
+    var modal_data = e.params.data;
+    received_order(modal_data.id);
+    $('#transaction_id_print_email_ro').select2().val(modal_data.id).trigger("change");
+    $('#receiving_order_id_print_email_ro').select2().val(modal_data.id).trigger("change");
+});
+
+$('#receiving_order_id_print_email_ro').on('select2:select', function (e) {
+    var modal_data = e.params.data;
+    received_order(modal_data.id);
+    $('#transaction_id_print_email_ro').select2().val(modal_data.id).trigger("change");
+    $('#receiving_order_id_print_email_ro').select2().val(modal_data.id).trigger("change");
+});
+
+
 function transaction_item(id){
 
   $.ajax({
@@ -86,6 +227,9 @@ function transaction_item(id){
         type: "get",
         datatype: "JSON",
         success: function(data) {
+
+          $('#ordered_item_list_table  > tbody tr').remove();
+
           $.each(data.purchase_order_items, function(key, value){                         
               console.log(value.item_id);
               var html = '';
@@ -116,6 +260,57 @@ function transaction_item(id){
           })
         }
       });      
+}
+
+function received_order(id){
+
+$.ajax({
+      url: "/receiving/get_receiving_order_info/"+id,
+      type: "get",
+      datatype: "JSON",
+      success: function(data) {
+
+        $('#received_order_item_list_table  > tbody tr').remove();
+        $('#tax').text(data.tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('#subtotal').text(data.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('#total').text(data.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+        $('#supplier_id_print_email_ro').val(data.supplier_id);
+        $('#supplier_name_print_email_ro').val(data.supplier_name);
+        $('#supplier_company_print_email_ro').val(data.supplier_company);
+        $('#ordered_date_print_email_ro').val(data.ordered_date);
+        $('#received_date_print_email_ro').val(data.received_date);
+        $('#total_damage_item').text(data.total_damage_items);
+        $('#total_missing_item').text(data.total_missing_items);
+        $('#total_accepted_item').text(data.total_accepted_items);
+
+        $.each(data.received_order_items, function(key, value){                         
+            console.log(value.item_id);
+            var html = '';
+                      html += '<tr>';
+                      html += '<td>'+value.item_id+'</td>';
+                      html += '<td>'+value.item_name+'</td>';
+                      html += '<td><span class="badge bg-primary">'+value.quantity+'</span></td>';
+                      html += '<td><span class="badge bg-success">'+value.quantity_received+'</span></td>';
+                      html += '<td><span class="badge bg-warning">'+value.quantity_missing+'</span></td>';
+                      html += '<td><span class="badge bg-danger">'+value.quantity_damage+'</span></td>';
+                      html += '<td>'+value.item_uom+'</td>';
+                      html += '<td>'+value.tax+' %</td>';
+                      html += '<td>'+value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                      html += '<td>'+value.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
+                      html += '</tr>';
+
+                      $('#received_order_item_list_table').prepend(html);
+
+        });
+
+      },
+      error: function(error){
+        Toast.fire({
+          type: 'error',
+          title: 'NetWork Error.'
+        })
+      }
+    });      
 }
 
 function received_item(id){
@@ -629,7 +824,7 @@ $(document).on('click', '#receive_order_next', function(){
   event.preventDefault();
 
   $.ajax({
-    url:"{{ route('receiving.receive_order') }}",
+    url:"{{ route('receiving.receiving_order') }}",
     type: "post",
     datatype: "JSON",
     data: {
@@ -651,7 +846,60 @@ $(document).on('click', '#receive_order_next', function(){
   
 });
 
+$(document).on('click', '#print_email_ro_next', function(){
 
+event.preventDefault();
+
+Pace.restart();
+
+  Pace.track(function () {
+
+      swal.fire({
+        title: 'Processing...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        onOpen: () => {
+          swal.showLoading();
+        }
+      })
+    $.ajax({
+      url:"{{ route('receiving.receive_order') }}",
+      type: "post",
+      datatype: "JSON",
+      data: {
+              "id": $('#receiving_order_id_print_email_ro').val(),
+          },
+      success: function(data) {
+        $( "#nav_print_email_ro" ).removeClass( "active" );
+        $( "#nav_received_items" ).addClass( "active" );
+        $( "#print_email_ro" ).removeClass( "active" );
+        $( "#received_items" ).addClass( "active" );
+
+            swal.fire({ 
+              title: 'Process Complete!',
+              type: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            })    
+      },
+      error: function(error){
+        Toast.fire({
+          type: 'error',
+          title: 'Network Error.'
+        })
+      }
+    });  
+  });
+});
+
+
+$('#pallet_builder').on('click', function (event) {
+
+event.preventDefault();
+$('#modal-default').modal('show');
+
+
+});
 
 });
 
@@ -677,12 +925,12 @@ $(document).on('click', '#receive_order_next', function(){
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>PO Receiving</h1>
+            <h1>Order Receiving</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">PO Receiving</li>
+              <li class="breadcrumb-item active">Order Receiving</li>
             </ol>
           </div>
         </div>
@@ -696,7 +944,7 @@ $(document).on('click', '#receive_order_next', function(){
           <div class="card-header p-3">
             <ul class="nav nav-pills">
               <li class="nav-item"><a class="nav-link active" id="nav_receive_order" href="#receive_order" data-toggle="tab"><i class="fas fa-truck-loading"></i> Receive Order</a></li>
-              <li class="nav-item"><a class="nav-link" id="nav_print_email_ro" href="#print_email_ro" data-toggle="tab"><i class="fas fa-print" style="margin-right:5px;"></i>Print and Email Receive Order</a></li>
+              <li class="nav-item"><a class="nav-link" id="nav_print_email_ro" href="#print_email_ro" data-toggle="tab"><i class="fas fa-print" style="margin-right:5px;"></i>Print and Email Received Order</a></li>
               <li class="nav-item"><a class="nav-link" id="nav_received_items" href="#received_items" data-toggle="tab"><i class="fas fa-box-open"></i> Received Items</a></li>
             </ul>
           </div><!-- /.card-header -->
@@ -865,16 +1113,6 @@ $(document).on('click', '#receive_order_next', function(){
            <div class="tab-pane" id="print_email_ro">
             <form role="form" method="post" id="confirm_order">
                 <div class="row" style="margin-bottom:25px">
-                  <!-- <div class="col-lg-6" style="margin-bottom:25px;">
-                    <h2>Purchase Order No : 
-                      <span id="purchase_order_id" style="color:red;"></span>
-                    </h2>
-                  </div>
-                  <div class="col-lg-6" style="margin-bottom:25px;">
-                    <h6 class="float-right">Transaction No : 
-                      <span id="transaction_id"></span>
-                    </h6>
-                  </div> -->
                   <div class="col-lg-5 col-md-12">
                     <div class="form-group row">
                       <label for="inputEmail3" class="col-sm-4 control-label">Transaction No.</label>
@@ -924,41 +1162,108 @@ $(document).on('click', '#receive_order_next', function(){
                         </div>
                         </div>
                         <div class="row">
-                        <div class="col-md-12">
-                          <div class="card">
-                            <div class="card-header p-2">
-                              <ul class="nav nav-pills">
-                                <li class="nav-item"><a class="nav-link active" href="#ordered_item_list" data-toggle="tab">Received Item</a></li>
-                              </ul>
-                            </div><!-- /.card-header -->
-                            <div class="card-body">
-                              <div class="tab-content">
-                                <div class="active tab-pane" id="ordered_item_list">
-                                  <table class="table" id="received_list_table">
-                                    <thead>
-                                      <tr>
-                                        <th>Item ID</th>
-                                        <th>Name</th>
-                                        <th>Ordered Qty</th>
-                                        <th>Missing Qty</th>
-                                        <th>Damage/Defective Qty</th>
-                                        <th>Received Qty</th>
-                                        <th>UOM(Item)</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                  </table>
-                                </div>
-                                <!-- /.tab-pane -->
+                          <div class="col-md-12">
+                              <div class="card">
+                                  <div class="card-header p-2">
+                                    <ul class="nav nav-pills">
+                                      <li class="nav-item"><a class="nav-link active" href="#ordered_item_list" data-toggle="tab">Received Item</a></li>
+                                    </ul>
+                                  </div><!-- /.card-header -->
+                                  <div class="card-body">
+                                    <div class="tab-content">
+                                      <div class="active tab-pane" id="ordered_item_list">
+                                        <table class="table" id="received_order_item_list_table">
+                                          <thead>
+                                            <tr>
+                                              <th>Item ID</th>
+                                              <th>Name</th>
+                                              <th>Ordered Qty</th>
+                                              <th>Accepted Qty</th>
+                                              <th>Missing Qty</th>
+                                              <th>Damage/Defective Qty</th>
+                                              <th>UOM(Item)</th>
+                                              <th>Tax Rate %</th>
+                                              <th>Price</th>
+                                              <th>Subtotal</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                      <!-- /.tab-pane -->
+                                    </div>
+                                    <!-- /.tab-content -->
+                                  </div><!-- /.card-body -->
                               </div>
-                              <!-- /.tab-content -->
-                            </div><!-- /.card-body -->
+                            <!-- /.nav-tabs-custom -->
                           </div>
-                          <!-- /.nav-tabs-custom -->
+                          
                         </div>
-                        </div>
+                        <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                      <div class="form-group">
+                                        <label>Comments</label>
+                                        <textarea class="form-control" id="comments" name="comments" rows="9" placeholder="Details..."></textarea>
+                                      </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                      <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                          <div class="info-box bg-green">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Total Accepted Item</span>
+                                              <span class="info-box-number" id="total_accepted_item">0</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                          <div class="info-box bg-yellow">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Total Missing Item</span>
+                                              <span class="info-box-number" id="total_missing_item">0</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                          <div class="info-box bg-red">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Total Damage Item</span>
+                                              <span class="info-box-number" id="total_damage_item">0</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                       <div class="col-sm-12 col-md-12 col-lg-6">
+                                          <div class="info-box bg-blue">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Tax Total</span>
+                                              <span class="info-box-number" id="tax">0</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                          <div class="info-box bg-blue">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Sub Total</span>
+                                              <span class="info-box-number" id="subtotal">0</span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                          <div class="info-box bg-secondary">
+                                            <div class="info-box-content">
+                                              <span class="info-box-text">Total</span>
+                                              <span class="info-box-number" id="total">0<span>
+                                            </span></span></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
               </form>
               <div class="col-lg-12">
                 <button id="print_ro" class="btn btn-primary">Print RO</button>
@@ -969,7 +1274,7 @@ $(document).on('click', '#receive_order_next', function(){
           <!-- /.tab-pane -->
           <div class="tab-pane" id="received_items">
             <div class="row">
-              <div class="col-lg-5">
+              <div class="col-lg-3">
                   <!-- Date range -->
                   <div class="form-group">
                     <div class="input-group">
@@ -984,23 +1289,41 @@ $(document).on('click', '#receive_order_next', function(){
                   </div>
                   <!-- /.form group -->
                 </div>
-                <div class="col-lg-6">
+                <div class="col-lg-2">
                   <div class="form-group">
-                    <select class="select2" id="filter_supplier" name="filter_supplier" data-placeholder="Filter Supplier" style="width: 100%;">
+                    <select class="select2" id="filter_type" name="filter_type" data-placeholder="Filter Type" style="width: 100%;">
+                      <option></option>
+                      <option value="Serialize">Serialize</option>
+                      <option value="Batch Tracked" >Batch Tracked</option>
+                      </select>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-group">
+                    <select class="select2" id="filter_receiving_no" name="filter_type" data-placeholder="Filter Receiving No." style="width: 100%;">
                       </select>
                   </div>
                 </div>
                 <div class="col-lg-1">
-                <button id="filter" class="btn btn-primary float-left"><i class="fas fa-filter"></i> Filter</button>
+                <button id="filter" class="btn btn-primary btn-block float-left"><i class="fas fa-filter"></i> Filter</button>
+                </div>
+                <div class="col-lg-1">
+                <button id="reset" class="btn btn-primary btn-block float-left"><i class="fas fa-undo"></i> Reset</button>
+                </div>
+                <div class="col-lg-2">
+                <button id="pallet_builder" class="btn btn-primary btn-block float-left"><i class="fas fa-pallet-alt"></i> Pallet Builder</button>
                 </div>
                 <div class="col-lg-12">
-                  <table class="table table-hover" id="nav5purchase_order_table" style="width: 100%;">
+                  <table class="table table-hover" id="received_items_table" style="width: 100%;">
                     <thead>
                       <tr>
                         <th>RO No.</th>
                         <th>Item ID</th>
                         <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
                         <th>UOM(Item)</th>
+                        <th>Type</th>
                         <th>Date Received</th>
                         <th>Action</th>
                       </tr>
@@ -1019,15 +1342,22 @@ $(document).on('click', '#receive_order_next', function(){
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h4 class="modal-title">Add Item</h4>
+                    <h4 class="modal-title">Pallet Builder</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
                   <div class="modal-body">
                   <form role="form" class="form-horizontal" method="post" id="add_item_table">
+                  <button id="reset" class="btn btn-primary btn-block"><i class="fas fa-forklift"></i>  New Pallet</button>
                   <div class="form-group row" id="item_id_modal_this">
-                      <label for="inputEmail3" class="col-sm-3 control-label">Item ID</label>
+                      <label for="inputEmail3" class="col-sm-3 control-label">Location</label>
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control" id="pallet_location" name="pallet_location" placeholder="Location"> 
+                      </div>
+                    </div>
+                    <div class="form-group row" id="item_id_modal_this">
+                      <label for="inputEmail3" class="col-sm-3 control-label">Comment</label>
                       <div class="col-sm-9">
                         <select class="select2" id="item_id_modal" name="item_id_modal" data-placeholder="Select a Item ID" style="width: 100%;">
                         </select>

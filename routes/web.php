@@ -21,11 +21,15 @@ Route::group(['namespace' => 'Admin'], function(){
 
 Route::get('/receiving', 'ReceivingController@index')->name('receiving.index');;
 Route::get('/receiving/transaction/list','ReceivingController@api_transaction_list')->name('receiving.api_transaction_list');
+Route::get('/receiving/received/list','ReceivingController@api_received_list')->name('receiving.api_received_list');
 Route::get('/receiving/get_transaction_info/{id}', 'ReceivingController@get_transaction_info')->name('receiving.get_transaction_info');
+Route::get('/receiving/get_receiving_order_info/{id}', 'ReceivingController@get_receiving_order_info')->name('receiving.get_receiving_order_info');
 Route::get('/receiving/receive_item_info/{id}', 'ReceivingController@receive_item_info')->name('receiving.receive_item_info');
 Route::get('/receiving/get_received_item/{id}', 'ReceivingController@get_received_item')->name('receiving.get_received_item');
 Route::get('/receiving/get_received_missing_item/{id}', 'ReceivingController@get_received_missing_item')->name('receiving.get_received_missing_item');
 Route::get('/receiving/get_received_damage_item/{id}', 'ReceivingController@get_received_damage_item')->name('receiving.get_received_damage_item');
+
+
 
 Route::get('/receiving/undo_receive_item_info/{id}', 'ReceivingController@undo_receive_item_info')->name('receiving.undo_receive_item_info');
 Route::get('/receiving/undo_receive_missing_item_info/{id}', 'ReceivingController@undo_receive_missing_item_info')->name('receiving.undo_receive_missing_item_info');
@@ -37,10 +41,9 @@ Route::post('/receiving/undo_receive_item', 'ReceivingController@undo_receive_it
 Route::post('/receiving/undo_receive_missing_item', 'ReceivingController@undo_receive_missing_item')->name('receiving.undo_receive_missing_item');
 Route::post('/receiving/undo_receive_damage_item', 'ReceivingController@undo_receive_damage_item')->name('receiving.undo_receive_damage_item');
 
+Route::post('/receiving/receiving_order', 'ReceivingController@receiving_order')->name('receiving.receiving_order');
 Route::post('/receiving/receive_order', 'ReceivingController@receive_order')->name('receiving.receive_order');
-
-
-
+Route::post('/receiving/api_get_all_received_item', 'ReceivingController@api_get_all_received_item')->name('receiving.api_get_all_received_item');
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');
 Route::get('/purchase_order/get_purchase_order_id', 'PurchaseOrderController@get_purchase_order_id')->name('purchase_order.get_purchase_order_id');

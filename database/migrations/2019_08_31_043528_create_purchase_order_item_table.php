@@ -18,9 +18,11 @@ class CreatePurchaseOrderItemTable extends Migration
             $table->string('purchase_order_id');
             $table->string('item_id');
             $table->string('type');
-            $table->string('cubic');
-            $table->string('weight_uom_id');
+            $table->string('volume');
+            $table->string('item_uom');
             $table->string('weight');
+            $table->string('total_weight');
+            $table->string('total_volume');
             $table->integer('quantity');
             $table->string('price');
             $table->string('line_total');
