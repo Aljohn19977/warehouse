@@ -30,7 +30,6 @@ Route::get('/receiving/get_received_missing_item/{id}', 'ReceivingController@get
 Route::get('/receiving/get_received_damage_item/{id}', 'ReceivingController@get_received_damage_item')->name('receiving.get_received_damage_item');
 
 
-
 Route::get('/receiving/undo_receive_item_info/{id}', 'ReceivingController@undo_receive_item_info')->name('receiving.undo_receive_item_info');
 Route::get('/receiving/undo_receive_missing_item_info/{id}', 'ReceivingController@undo_receive_missing_item_info')->name('receiving.undo_receive_missing_item_info');
 Route::get('/receiving/undo_receive_damage_item_info/{id}', 'ReceivingController@undo_receive_damage_item_info')->name('receiving.undo_receive_damage_item_info');
@@ -40,10 +39,14 @@ Route::post('/receiving/receive_damage_item', 'ReceivingController@receive_damag
 Route::post('/receiving/undo_receive_item', 'ReceivingController@undo_receive_item')->name('receiving.undo_receive_item');
 Route::post('/receiving/undo_receive_missing_item', 'ReceivingController@undo_receive_missing_item')->name('receiving.undo_receive_missing_item');
 Route::post('/receiving/undo_receive_damage_item', 'ReceivingController@undo_receive_damage_item')->name('receiving.undo_receive_damage_item');
+Route::post('/receiving/selected_serialize_item', 'ReceivingController@selected_serialize_item')->name('receiving.selected_serialize_item');
 
 Route::post('/receiving/receiving_order', 'ReceivingController@receiving_order')->name('receiving.receiving_order');
 Route::post('/receiving/receive_order', 'ReceivingController@receive_order')->name('receiving.receive_order');
-Route::post('/receiving/api_get_all_received_item', 'ReceivingController@api_get_all_received_item')->name('receiving.api_get_all_received_item');
+Route::post('/receiving/api_get_all_received_item', 'ReceivingController@api_get_all_received_item_barcoding')->name('receiving.api_get_all_received_item_barcoding');
+Route::post('/receiving/api_get_selected_received_item_barcoding', 'ReceivingController@api_get_selected_received_item_barcoding')->name('receiving.api_get_selected_received_item_barcoding');
+
+
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');
 Route::get('/purchase_order/get_purchase_order_id', 'PurchaseOrderController@get_purchase_order_id')->name('purchase_order.get_purchase_order_id');

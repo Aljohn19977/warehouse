@@ -19,8 +19,9 @@ class CreateReceivingItemTable extends Migration
             $table->string('receiving_id');
             $table->string('item_id');
             $table->string('status')->nullable();
+            $table->string('location');
             $table->integer('quantity');
-            $table->integer('price');
+            $table->string('price');
             $table->timestamps();
         });
     }

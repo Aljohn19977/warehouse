@@ -18,13 +18,15 @@ class CreateInventoryBatchTrackedItemTable extends Migration
             $table->string('batch_tracked_item_id')->nullable();
             $table->string('receiving_item_id');
             $table->string('item_id');
-            $table->integer('price');
+            $table->string('price');
             $table->integer('quantity');
             $table->boolean('bar_code');
             $table->string('status');
+            $table->string('location');
             $table->string('bin_id')->nullable();
             $table->string('pallet_id')->nullable();
             $table->string('expiration_date')->nullable();
+            $table->timestamps();
         });
     }
 

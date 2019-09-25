@@ -25,6 +25,10 @@ class Item extends Model
         return $this->belongsToMany('App\Models\Supplier');
     }
 
+    public function inventory_serialized(){
+        return $this->belongsToMany('App\Models\Inventory_Serialized_Item','item_id','id');
+    }
+
     public function purchase_order(){
         return $this->belongsToMany('App\Models\Purchase_Order_Item','item_id');
     }

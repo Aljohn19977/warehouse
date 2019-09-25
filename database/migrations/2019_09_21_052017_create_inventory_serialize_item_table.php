@@ -18,9 +18,10 @@ class CreateInventorySerializeItemTable extends Migration
             $table->string('serialize_item_id')->nullable();
             $table->string('receiving_item_id');
             $table->string('item_id');
-            $table->integer('price');
+            $table->string('price');
             $table->boolean('bar_code');
             $table->string('status');
+            $table->string('location');
             $table->string('bin_id')->nullable();
             $table->string('pallet_id')->nullable();
             $table->string('expiration_date')->nullable();

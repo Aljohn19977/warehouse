@@ -18,7 +18,9 @@ class CreateReceivingTable extends Migration
             $table->string('receiving_id');
             $table->string('transaction_id');
             $table->string('supplier_id');
+            $table->string('receiver_name');
             $table->string('order_date');
+            $table->string('location');
             $table->string('status');
             $table->timestamps();
         });

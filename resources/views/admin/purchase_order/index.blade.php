@@ -540,6 +540,7 @@ function view_po(id){
           type: "get",
           datatype: "JSON",
           success: function(data) {
+            
             get_purchase_order_view_list(data.purchase_order_id);
             $('#nav4_order_date').val(data.order_date);
             $('#nav4_deliver_to').val(data.deliver_to);
@@ -547,11 +548,15 @@ function view_po(id){
             $('#nav4_supplier_company').val(data.supplier_company);
             $('#nav4_supplier_name').val(data.supplier_name);
             $('#status_icon').remove();
+
             if(data.status == 'Placed'){
               $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-success">Placed</button>');
-            }else if (data.status =='Recieved'){
-              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-warning">Recieved</button>');
-            }else if(data.status == 'canceled'){
+            }else if (data.status =='Received'){
+              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-primary">Recieved</button>');
+            }else if (data.status =='Receiving'){
+              $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-warning">Receiving</button>');
+            }
+            else if(data.status == 'Canceled'){
               $('#nav4_status').append('<button id="status_icon" class="btn btn-xs btn-flat btn-danger">Canceled</button> ');
             }
 
@@ -971,7 +976,7 @@ $('#cancel').on('click', function (event) {
                       get_purchase_order_cancel_list();
                       get_purchase_order_print_list();
 
-                      $("#cancel").attr("hidden",true);
+                      $('#cancel').attr("disabled", 'disabled');
 
                       $('#nav3_order_date').val('');
                       $('#nav3_deliver_to').val('');
@@ -1220,6 +1225,8 @@ $(document).on('click','#submit',function(event){
                           $('#supplier_company').val('');
                           $('#purchase_order_table  > tbody tr  tr').remove();
 
+
+                            get_purchase_order_id();
                             get_total();
                             get_subtotal();
                             get_weight_total();
@@ -1882,6 +1889,7 @@ $(document).on('click', '#table_cancel', function(){
                     <option value="Placed">Placed</option>
                     <option value="Canceled" >Canceled</option>
                     <option value="Received" >Received</option>
+                    <option value="Receiving" >Receiving</option>
                     </select>
                 </div>
               </div>

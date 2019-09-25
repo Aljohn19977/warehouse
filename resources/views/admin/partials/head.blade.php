@@ -10,7 +10,7 @@
   @yield('style')
   <!-- Font Awesome Icons -->
   <!-- <link rel="stylesheet" href="{{ asset('admin/plugins/fontawesome-free/css/all.min.css') }}"> -->
-  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.1.0/css/all.css">
+    <link rel="stylesheet" href="https://kit-pro.fontawesome.com/releases/latest/css/pro.min.css">
   <link rel="stylesheet" href="{{ asset('admin/dist/css/pace.min.css') }}">
   <link rel="stylesheet" href="{{ asset('admin/plugins/sweetalert2/sweetalert2.min.css') }}">
   <!-- Theme style -->

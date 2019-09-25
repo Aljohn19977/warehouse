@@ -15,6 +15,8 @@ use App\Models\Receiving_Damage_Item;
 use App\Models\Receiving;
 use App\Models\Inventory_Batch_Tracked_Item;
 use App\Models\Inventory_Serialized_Item;
+use Redirect;
+use PDF;
 
 class ReceivingController extends Controller
 {
@@ -303,6 +305,8 @@ class ReceivingController extends Controller
                 $receiving->transaction_id = $receive_item_info->purchase_order->transaction_id;
                 $receiving->supplier_id = $receive_item_info->purchase_order->supplier_id;
                 $receiving->order_date = $receive_item_info->purchase_order->order_date;
+                $receiving->location = $request->location;
+                $receiving->receiver_name = $request->receiver_name;
                 $receiving->status = 'Ongoing';
                 $receiving->save();   
                 
@@ -312,6 +316,7 @@ class ReceivingController extends Controller
                 $receiving_item->purchase_order_item_id = $receive_item_info->id;
                 $receiving_item->item_id = $receive_item_info->item_id;
                 $receiving_item->quantity = $request->quantity;
+                $receiving_item->location = $request->location;
                 $receiving_item->price = ($receive_item_info->tax*$receive_item_info->price/100) + $receive_item_info->price;
                 $receiving_item->save();   
         
@@ -345,6 +350,7 @@ class ReceivingController extends Controller
                         $receiving_item->purchase_order_item_id = $receive_item_info->id;
                         $receiving_item->item_id = $receive_item_info->item_id;
                         $receiving_item->quantity = $request->quantity;
+                        $receiving_item->location = $request->location;
                         $receiving_item->price = ($receive_item_info->tax*$receive_item_info->price/100) + $receive_item_info->price;
                         $receiving_item->save();   
 
@@ -382,6 +388,8 @@ class ReceivingController extends Controller
                 $receiving->transaction_id = $receive_item_info->purchase_order->transaction_id;
                 $receiving->supplier_id = $receive_item_info->purchase_order->supplier_id;
                 $receiving->order_date = $receive_item_info->purchase_order->order_date;
+                $receiving->location = $request->location;
+                $receiving->receiver_name = $request->receiver_name;                
                 $receiving->status = 'Ongoing';
                 $receiving->save();   
         
@@ -461,6 +469,8 @@ class ReceivingController extends Controller
                 $receiving->transaction_id = $receive_item_info->purchase_order->transaction_id;
                 $receiving->supplier_id = $receive_item_info->purchase_order->supplier_id;
                 $receiving->order_date = $receive_item_info->purchase_order->order_date;
+                $receiving->location = $request->location;
+                $receiving->receiver_name = $request->receiver_name;
                 $receiving->status = 'Ongoing';
                 $receiving->save();   
         
@@ -853,8 +863,9 @@ class ReceivingController extends Controller
                         $inventory_serialize_item = new Inventory_Serialized_Item;
                         // $inventory_serialize_item->serialize_item_id = $check_receiving->receiving_id;
                         $inventory_serialize_item->receiving_item_id = $received_item->id;
-                        $inventory_serialize_item->item_id = $item->item_id;
+                        $inventory_serialize_item->item_id = $item->id;
                         $inventory_serialize_item->price = $received_item->price;
+                        $inventory_serialize_item->location = $received_item->location;
                         $inventory_serialize_item->bar_code = false;
                         $inventory_serialize_item->status = 'Active';
                         $inventory_serialize_item->save();  
@@ -867,14 +878,15 @@ class ReceivingController extends Controller
 
                         $inventory_batch_tracked_item = new Inventory_Batch_Tracked_Item;
                         $inventory_batch_tracked_item->receiving_item_id = $received_item->id;
-                        $inventory_batch_tracked_item->item_id = $item->item_id;
+                        $inventory_batch_tracked_item->item_id = $item->id;
                         $inventory_batch_tracked_item->price = $received_item->price;
                         $inventory_batch_tracked_item->quantity = $received_item->quantity;
+                        $inventory_batch_tracked_item->location = $received_item->location;
                         $inventory_batch_tracked_item->bar_code = false;
                         $inventory_batch_tracked_item->status = 'Active';
                         $inventory_batch_tracked_item->save();  
 
-                        Inventory_Batch_Tracked_Item::where('id','=', $inventory_batch_tracked_item->id)->update(['batch_tracked_item_id'=>'B-STK-'.str_pad($batch_tracked_item_id->id, 14, "0", STR_PAD_LEFT)]);
+                        Inventory_Batch_Tracked_Item::where('id','=', $inventory_batch_tracked_item->id)->update(['batch_tracked_item_id'=>'B-STK-'.str_pad($inventory_batch_tracked_item->id, 14, "0", STR_PAD_LEFT)]);
 
             }
             // $nestedData['id']  = $transaction_item->id;
@@ -895,7 +907,7 @@ class ReceivingController extends Controller
 
 
 
-    public function api_get_all_received_item(Request $request){
+    public function api_get_all_received_item_barcoding(Request $request){
 
       $columns = array(
         0 => 'receiving_id',
@@ -964,7 +976,7 @@ class ReceivingController extends Controller
               }
         
             $query = $query->offset($start)->limit($limit)->orderBy($order,$dir)
-            ->select('receiving_item.receiving_id AS receiving_id','items.item_id AS item_id','items.name AS name','receiving_item.quantity AS quantity','receiving_item.price AS price','items.item_uom AS item_uom','items.type AS type','receiving_item.updated_at');
+            ->select('receiving_item.id AS id','receiving_item.receiving_id AS receiving_id','items.item_id AS item_id','items.name AS name','receiving_item.quantity AS quantity','receiving_item.price AS price','items.item_uom AS item_uom','items.type AS type','receiving_item.updated_at');
             
              $received_item = $query->get();
     
@@ -1062,11 +1074,11 @@ class ReceivingController extends Controller
 
         
          if($value->type == 'Serialize'){
-            $action = '<button class="btn btn-primary table_print" id="table_print" data-id="'.$value->receiving_id.'" style="color:white;"><i class="fas fa-print"></i></button>';
+            $action = '<button class="btn btn-primary table_print" id="table_print_serialize" data-id="'.$value->id.'" style="color:white;"><i class="fas fa-print"></i></button>';
          }else if($value->type == 'Batch Tracked'){
-            $action = '<button class="btn btn-primary table_print" id="table_print" data-id="'.$value->receiving_id.'" style="color:white;" disabled><i class="fas fa-print"></i></button>';
+            $action = '<button class="btn btn-primary table_print" id="table_print_batch_tracked" data-id="'.$value->id.'" style="color:white;"><i class="fas fa-print"></i></button>';
          }
- 
+
           $nestedData['receiving_id']  = $value->receiving_id;
           $nestedData['item_id']  = $value->item_id;
           $nestedData['name']  = $value->name; 
@@ -1094,6 +1106,149 @@ class ReceivingController extends Controller
 
     }
 
+    public function api_get_selected_received_item_barcoding(Request $request){
+
+        $columns = array(
+          0 => 'serialize_item_id',
+          1 => 'id',
+          2 => 'bar_code',
+        );
+  
+  
+        $id = $request->id;
+   
+        $query = Inventory_Serialized_Item::query();
+
+        
+        $query = $query->where('receiving_item_id','=', $id);
+  
+        $totalData = $query->count();
+  
+        $limit = $request->length;
+        $start = $request->start;
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+   
+  
+        if (empty($request->input('search.value'))){
+   
+  
+            $query = Inventory_Serialized_Item::query();
+  
+            $query = $query->where('receiving_item_id','=', $id);
+  
+          
+              $query = $query->offset($start)->limit($limit)->orderBy($order,$dir)
+              ->select('id','serialize_item_id','bar_code');
+              
+               $items = $query->get();
+      
+                $query = Inventory_Serialized_Item::query();
+    
+                $query = $query->where('receiving_item_id','=', $id);
+  
+                  $totalFiltered = $query->count();
+  
+                  
+  
+        }
+        else{
+           $search = $request->input('search.value');
+  
+           $query = Inventory_Serialized_Item::query();
+    
+           $query = $query->where('receiving_item_id','=', $id);
+
+    
+              $query = $query->WhereRaw("(id AND serialize_item_id LIKE ?)", "%{$search}%")
+              ->offset($start)
+              ->limit($limit)
+              ->orderBy($order,$dir)
+              ->select('id','serialize_item_id','bar_code');
+
+              $items = $query->get();
+  
+              $query = Inventory_Serialized_Item::query();
+    
+              $query = $query->where('receiving_item_id','=', $id);
+      
+              $query = $query->WhereRaw("(id AND serialize_item_id LIKE ?)", "%{$search}%")
+              ->offset($start)
+              ->limit($limit)
+              ->orderBy($order,$dir)
+              ->select('id','serialize_item_id','bar_code');
+
+              $totalFiltered = $query->get()->count();
+        }
+   
+        $data = array();
+   
+   
+        if ($items){
+          foreach ($items as $value) {
+
+  
+  
+            if($value->bar_code == false ){
+                $bar_code = '<button class="btn btn-danger" style="color:white;">Unprinted</button>';
+             }else if($value->bar_code == true){
+                $bar_code = '<button class="btn btn-primary" style="color:white;">Printed</button>';
+             }
+
+            $nestedData['check_box']  = $value->id; 
+            $nestedData['serialize_item_id']  = $value->serialize_item_id; 
+            $nestedData['bar_code']  = $bar_code; 
+        
+            $data[] = $nestedData;
+          }
+        }
+   
+  
+        $json_data = array(
+          "draw" => ($request->draw ? intval($request->draw):0), 
+          "recordsTotal" => intval($totalData), 
+          "recordsFiltered" => intval($totalFiltered), 
+          "data" => $data, 
+        );
+   
+        return json_encode($json_data);
+  
+  
+      }
+
+    public function selected_serialize_item(Request $request)
+    {
+
+        $barcodes = array();
+
+        foreach($request->id as $barcode){
+            
+            Inventory_Serialized_Item::where('id','=', $barcode)->update(['expiration_date'=>$request->expiration_date]);
+            $item = Inventory_Serialized_Item::where('id','=', $barcode)->first();
+
+            if($item->expiration_date == null){
+                $expiration = '- No-Exp-Date-';
+            }else{
+                $expiration = 'Exp Date : '.$item->expiration_date;
+            }
+            
+            $nestedData['id']  = $item->id; 
+            $nestedData['serialize_item_id']  = $item->serialize_item_id;     
+            $nestedData['item_name']  = $item->item->name;  
+            $nestedData['expiration_date']  = $expiration;     
+            $barcodes[] = $nestedData;
+        }
+
+        $customPaper = array(0,0,85.04,113.39);
+        $pdf = PDF::loadView('admin.receiving.serialize_item_barcode_label',compact('barcodes'))->setPaper($customPaper, 'landscape');        
+        return $pdf->stream('invoice.pdf');
+    }
+
+    public function selected_serialize_item_template()
+    {
+        return view('admin.receiving.serialize_item_barcode_label');
+
+    }
 
     public function create()
     {
