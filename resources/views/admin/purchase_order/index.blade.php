@@ -457,7 +457,7 @@ function print_email_po(id){
                           html += '<td>'+value.quantity+'</td>';
                           html += '<td>'+value.item_uom+'</td>';
                           html += '<td>'+value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
-                          html += '<td>'+value.line_total+'</td>';
+                          html += '<td>'+value.line_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.tax_total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
                           html += '<td>'+value.subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>';
@@ -788,10 +788,10 @@ $('#modal_add_close').on('click', function (event) {
                           html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
                           html += '<td><input type="text" class="form-control" name="row_item_uom[]" value="'+uom_item+'" hidden>'+uom_item+'</td>';
                           html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price.replace(/,/g, '')+'" hidden>'+item_price+'</td>';
-                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
+                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table.replace(/,/g, '')+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
                           html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
-                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
-                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total+'" hidden></td>';
+                          html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table.replace(/,/g, '')+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
+                          html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total.replace(/,/g, '')+'" hidden></td>';
                           html += '<td class="row_volume" style="display:none;"><span id="total_volume_td_'+id+'">'+total_volume+'</span><<input type="text" class="form-control" id="total_volume_'+id+'" name="row_total_volume[]" value="'+total_volume+'" hidden></td>';
                           html += '<td class="row_weight" style="display:none;"><span id="total_weight_td_'+id+'">'+total_weight+'</span><input type="text" class="form-control" id="total_weight_'+id+'" name="row_total_weight[]" value="'+total_weight+'" hidden></td>';
                           html += '<td style="display:none;"><input type="text" class="form-control" id="volume_'+id+'" name="row_volume[]" value="'+volume_modal+'" hidden></td>';
@@ -867,7 +867,7 @@ $('#modal_add_new').on('click', function (event) {
                           html += '<td><input type="number" class="form-control" data-id="'+id+'" id="quantity" name="row_quantity[]" value="'+quantity+'"></td>';
                           html += '<td><input type="text" class="form-control" name="row_item_uom[]" value="'+uom_item+'" hidden>'+uom_item+'</td>';
                           html += '<td><input type="text" class="form-control" id="price_'+id+'" name="row_item_price[]" value="'+item_price.replace(/,/g, '')+'" hidden>'+item_price+'</td>';
-                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
+                          html += '<td class="row_subtotal"><input type="text" id="subtotal_table_'+id+'" class="form-control" name="row_line_total[]" value="'+subtotal_table.replace(/,/g, '')+'" hidden><span id="subtotal_table_td_'+id+'">'+subtotal_table+'</span></td>';
                           html += '<td><input type="text" class="form-control" id="tax_'+id+'" name="row_tax[]" value="'+tax_modal+'" hidden>'+tax_modal+' %</td>';
                           html += '<td class="row_tax"><input type="text"  id="taxtotal_table_'+id+'" class="form-control" name="row_tax_total[]" value="'+taxtotal_table.replace(/,/g, '')+'" hidden><span id="taxtotal_table_td_'+id+'">'+taxtotal_table+'</span></td>';
                           html += '<td class="row_total"><span id="total_table_td_'+id+'">'+total+'</span><input type="text"  id="total_table_'+id+'" class="form-control" name="row_total[]" value="'+total.replace(/,/g, '')+'" hidden></td>';
@@ -1223,7 +1223,7 @@ $(document).on('click','#submit',function(event){
                           $('#supplier').select2().val(null).trigger("change");
                           $('#supplier_id').val('');
                           $('#supplier_company').val('');
-                          $('#purchase_order_table  > tbody tr  tr').remove();
+                          $('#purchase_order_table  > tbody tr').remove();
 
 
                             get_purchase_order_id();
@@ -1272,6 +1272,14 @@ $(document).on('click', '#table_cancel', function(){
                           cancel_po($(this).data().id);
 });
 
+
+$('#print_po').on('click', function(e){
+
+  e.preventDefault();
+
+  $( "#print_and_email_po" ).submit();
+
+});
 
 });
 
@@ -1477,8 +1485,8 @@ $(document).on('click', '#table_cancel', function(){
                         </div>
                       </div>
                       <div class="col-lg-12">
-                        <button id="submit" class="btn btn-primary">Create</button>
-                        <button id="back" class="btn btn-primary">Back</button>
+                      <button id="back" class="btn btn-primary">Back</button>
+                        <button id="submit" class="btn btn-primary">Next Process<i class="fas fa-arrow-right" style="margin-left:4px;"></i></button>
                       </div>
             </form>
           </div>
@@ -1486,12 +1494,15 @@ $(document).on('click', '#table_cancel', function(){
            <div class="tab-pane" id="print_email_po">
             <div class="row" style="margin-bottom:25px">
               <div class="col-lg-5 col-md-12">
+              <form role="form" class="form-horizontal" method="POST" target="POPUPW" onsubmit="POPUPW = window.open('about:blank','POPUPW','width=600,height=500');" action="{{ route('purchase_order.print_and_email_po') }}" id="print_and_email_po">
+                  {{ csrf_field() }}
                 <div class="form-group row">
                   <label for="inputEmail3" class="col-sm-4 control-label">Purchase Order No</label>
                   <div class="col-sm-8">
                     <select class="select2" id="nav2_purchase_order_no" name="nav2_purchase_order_no" data-placeholder="Purchase Order No" style="width: 100%;"></select>
                   </div>
                 </div>
+                </form>
                 <div class="form-group row">
                   <label for="inputEmail3" class="col-sm-4 control-label">Transaction No</label>
                   <div class="col-sm-8">

@@ -75,7 +75,9 @@
         <div id="container">
             @foreach($barcodes as $barcode)
             <div>
-                <div style="margin-top:9px; margin-left:8px;">{!! DNS1D::getBarcodeHTML($barcode['id'], "C39",1.4,40) !!}</div>
+                <div>
+                     <img style="min-width:140px; max-width:140px; height:35px; margin-top:13px; margin-left:7px;"  src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode['id'], 'C39')}}" alt="barcode" />
+                </div>
                 <div style="margin-top:1px;">
                     <p style="font-size:11px; text-align:center;">{{ $barcode['serialize_item_id'] }}</p>
                     <p style="font-size:12px; text-align:center; margin-top:1px;">{{ $barcode['item_name'] }}</p>

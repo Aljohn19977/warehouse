@@ -28,7 +28,8 @@ Route::get('/receiving/receive_item_info/{id}', 'ReceivingController@receive_ite
 Route::get('/receiving/get_received_item/{id}', 'ReceivingController@get_received_item')->name('receiving.get_received_item');
 Route::get('/receiving/get_received_missing_item/{id}', 'ReceivingController@get_received_missing_item')->name('receiving.get_received_missing_item');
 Route::get('/receiving/get_received_damage_item/{id}', 'ReceivingController@get_received_damage_item')->name('receiving.get_received_damage_item');
-
+Route::get('/receiving/get_batch_id', 'ReceivingController@get_batch_id')->name('receiving.get_batch_id');
+Route::get('/receiving/get_batch_quantity_remaining/{id}', 'ReceivingController@get_batch_quantity_remaining')->name('receiving.get_batch_quantity_remaining');
 
 Route::get('/receiving/undo_receive_item_info/{id}', 'ReceivingController@undo_receive_item_info')->name('receiving.undo_receive_item_info');
 Route::get('/receiving/undo_receive_missing_item_info/{id}', 'ReceivingController@undo_receive_missing_item_info')->name('receiving.undo_receive_missing_item_info');
@@ -40,13 +41,13 @@ Route::post('/receiving/undo_receive_item', 'ReceivingController@undo_receive_it
 Route::post('/receiving/undo_receive_missing_item', 'ReceivingController@undo_receive_missing_item')->name('receiving.undo_receive_missing_item');
 Route::post('/receiving/undo_receive_damage_item', 'ReceivingController@undo_receive_damage_item')->name('receiving.undo_receive_damage_item');
 Route::post('/receiving/selected_serialize_item', 'ReceivingController@selected_serialize_item')->name('receiving.selected_serialize_item');
+Route::post('/receiving/add_batch', 'ReceivingController@add_batch')->name('receiving.add_batch');
 
 Route::post('/receiving/receiving_order', 'ReceivingController@receiving_order')->name('receiving.receiving_order');
 Route::post('/receiving/receive_order', 'ReceivingController@receive_order')->name('receiving.receive_order');
 Route::post('/receiving/api_get_all_received_item', 'ReceivingController@api_get_all_received_item_barcoding')->name('receiving.api_get_all_received_item_barcoding');
+Route::post('/receiving/api_get_all_batch', 'ReceivingController@api_get_all_batch')->name('receiving.api_get_all_batch');
 Route::post('/receiving/api_get_selected_received_item_barcoding', 'ReceivingController@api_get_selected_received_item_barcoding')->name('receiving.api_get_selected_received_item_barcoding');
-
-
 
 Route::get('/purchase_order', 'PurchaseOrderController@index')->name('purchase_order.index');
 Route::get('/purchase_order/get_purchase_order_id', 'PurchaseOrderController@get_purchase_order_id')->name('purchase_order.get_purchase_order_id');
@@ -61,6 +62,8 @@ Route::post('/purchase_order/store', 'PurchaseOrderController@store')->name('pur
 Route::post('/purchase_order/cancel', 'PurchaseOrderController@cancel')->name('purchase_order.cancel');
 Route::post('/purchase_order/validation/add_item_table', 'PurchaseOrderController@validation_add_item_table')->name('purchase_order.validation_add_item_table');
 Route::post('/purchase_order/api_get_all_purchase_order', 'PurchaseOrderController@api_get_all_purchase_order')->name('purchase_order.api_get_all_purchase_order');
+
+Route::post('/purchase_order/print_and_email_po', 'PurchaseOrderController@print_and_email_po')->name('purchase_order.print_and_email_po');
 
 Route::get('/item', 'ItemController@index')->name('item.index');
 Route::get('/item/create', 'ItemController@create')->name('item.create');

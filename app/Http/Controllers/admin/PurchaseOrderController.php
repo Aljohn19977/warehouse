@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use App\Models\Item;
 use App\Models\Purchase_Order;
 use App\Models\Purchase_Order_Item;
+use PDF;
 
 
 class PurchaseOrderController extends Controller
@@ -496,7 +497,7 @@ class PurchaseOrderController extends Controller
           $nestedData['supplier_id']  = $value->supplier_id; 
           $nestedData['order_date']  = $value->order_date; 
           $nestedData['status']  = $value->status; 
-          $nestedData['total']  = number_format($value->total, 2 ); 
+          $nestedData['total']  = number_format($value->total, 0 ); 
           $nestedData['action']  = $action;       
 
           $data[] = $nestedData;
@@ -514,6 +515,20 @@ class PurchaseOrderController extends Controller
       return json_encode($json_data);
 
 
+    }
+
+    public function print_and_email_po(Request $request)
+    {
+
+        $purchase_order = Purchase_Order::where('purchase_order_id','=',$request->nav2_purchase_order_no)->first();
+        $purchase_order_items =  $purchase_order->purchase_order_items;
+        $supplier =  $purchase_order->supplier;
+
+
+        $customPaper = array(0,0,612,792);
+        $pdf = PDF::loadView('admin.purchase_order.printable_po',compact('purchase_order','purchase_order_items','supplier'))->setPaper($customPaper, 'landscape');        
+        return $pdf->stream('invoice.pdf');
+        
     }
 
     public function show($id)

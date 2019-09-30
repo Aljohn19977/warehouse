@@ -21,6 +21,7 @@ class CreateReceivingItemTable extends Migration
             $table->string('status')->nullable();
             $table->string('location');
             $table->integer('quantity');
+            $table->boolean('bar_code');
             $table->string('price');
             $table->timestamps();
         });

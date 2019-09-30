@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInventorySerializeItemTable extends Migration
+class CreateInventoryItemTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateInventorySerializeItemTable extends Migration
      */
     public function up()
     {
-        Schema::create('inventory_serialize_item', function (Blueprint $table) {
+        Schema::create('inventory_item', function (Blueprint $table) {
 			$table->bigIncrements('id');
             $table->string('serialize_item_id')->nullable();
+            $table->string('batch_item_id')->nullable();
             $table->string('receiving_item_id');
             $table->string('item_id');
             $table->string('price');
@@ -36,6 +37,6 @@ class CreateInventorySerializeItemTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inventory_serialize_item');
+        Schema::dropIfExists('inventory_item');
     }
 }

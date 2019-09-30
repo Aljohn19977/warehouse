@@ -7,6 +7,18 @@
 
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 
+<style>
+  .loader {
+    position: absolute;
+    -webkit-animation:spin 2s linear infinite;
+    -moz-animation:spin 2s linear infinite;
+    animation:spin 2s linear infinite;
+    }
+    @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+    @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+    @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+</style>
+
 @endsection
 
 @section('script')
@@ -74,11 +86,50 @@ received_item_datatable();
       endDate = null;  
   });
 
+function clearError(){
+  $( ".is-invalid" ).removeClass("is-invalid");
+  $( ".help-block" ).remove();
+}
+
+
+function get_batch_id(){
+    $.ajax({
+        type: 'get',
+        url: "{{ route('receiving.get_batch_id') }}",
+        success: function(data) {
+           $('#batch_id').val(data.batch_id);
+        },
+        error: function(error){
+          console.log('error');
+        }
+     }); 
+}
 
 $('#expiration_date').daterangepicker({
       singleDatePicker: true,
       showDropdowns: true,
 });
+
+// $('#expiration_date2').daterangepicker({
+//       singleDatePicker: true,
+//       showDropdowns: true,
+//       autoUpdateInput: false,
+//       locale: {
+//         format: 'DD/MM/YYYY'
+//       }
+// });
+
+
+$('#expiration_date2').daterangepicker({
+    singleDatePicker: true,
+        locale: {
+            format: 'MM/DD/YYYY'
+        },
+        autoUpdateInput: false
+    }).on("apply.daterangepicker", function (e, picker) {
+        picker.element.val(picker.startDate.format(picker.locale.format));
+    });
+
 
 function received_item_datatable(start_date,end_date,filter_type,filter_receiving_id){
   $('#barcoding_items_table').DataTable({
@@ -105,9 +156,10 @@ function received_item_datatable(start_date,end_date,filter_type,filter_receivin
                             {"data" : "item_id"},
                             {"data" : "name"},
                             {"data" : "quantity"},
-                            {"data" : "price"},
+                            // {"data" : "price"},
                             {"data" : "item_uom"},
                             {"data" : "type"},
+                            {"data" : "bar_code"},
                             {"data" : "updated_at"},
                             {"data" : "action"}
                           ],
@@ -914,7 +966,101 @@ $('#modal-default').modal('show');
 
 });
 
+function get_batch_quantity_remaining(id){
+    $.ajax({
+        type: 'get',
+        dataType: 'JSON',
+        url: "/receiving/get_batch_quantity_remaining/"+id,
+        success: function(data) {
+          $('#item_quantity').text(data.quantity_remaining)
+        },
+        error: function(error){
+              Toast.fire({
+                type: 'error',
+                title: 'NetWork Error.'
+              })
+        }
+    });
+} 
 
+$(document).on('click', '#table_print_batch_tracked', function(){
+
+event.preventDefault();
+
+var id = $(this).data().id;
+
+get_batch_id();
+get_batch_quantity_remaining(id);
+
+$('#modal-batch').modal('show');
+
+
+  $('#batch_list_table').DataTable({
+                  processing: true,
+                  serverSide: true,
+                  responsive: true,
+                  paging: true,
+                  lengthChange: true,
+                  searching: true,
+                  autoWidth: true,
+                  ajax: {
+                          'url' : "{{ route('receiving.api_get_all_batch')}}",
+                          'dataType' : 'json',
+                          'type' : 'post'
+                  },
+                aoColumnDefs: [
+                      { "bSortable": false, "aTargets": [ 0, 3 ] }, 
+                      { "bSearchable": false, "aTargets": [ 3 ] }
+                  ],
+                    columns : [
+                                {"data" : "batch_id"},
+                                {"data" : "name"},
+                                {"data" : "expiration_date"},
+                                {"data" : "action"},
+                              ]
+
+  });
+
+
+  $('#add_batch_id').on('click', function(e){
+
+    
+      e.preventDefault();
+
+      $("#modal_loader2").attr("hidden",false);
+
+      $.ajax({
+        url: "{{ route('receiving.add_batch') }}",
+        type: "post",
+        datatype: "JSON",
+        data:{
+            "batch_id": $('#batch_id').val(),
+            "batch_name" : $('#batch_name').val(),
+            "expiration_date" : $('#expiration_date2').val(),
+        },
+        success: function(data) {
+          clearError();
+          get_batch_id();
+          $('#batch_name').val('')
+          $('#expiration_date2').val('')
+          $("#modal_loader2").attr("hidden",true)
+          $('#batch_list_table').DataTable().ajax.reload();
+        },
+        error: function(error){
+          $("#modal_loader2").attr("hidden",true)
+          clearError();
+          $.each(error.responseJSON.errors, function(key, value){                         
+                                  $("input[id="+key+"]").addClass("is-invalid");
+                                  $("#"+key+"_this").append("<span class='help-block' style='color:red;'>"+value+"</span>");
+                            });
+        }
+      });  
+
+
+  });
+
+ 
+});
 
 $(document).on('click', '#table_print_serialize', function(){
 
@@ -923,7 +1069,9 @@ $(document).on('click', '#table_print_serialize', function(){
   var id = $(this).data().id;
 
   $('#print_button').attr("disabled", 'disabled');
-  $('#modal-default').modal('show');
+  $('#mark_button').attr("disabled", 'disabled');
+  $('#unmark_button').attr("disabled", 'disabled');
+  $('#modal-serialize').modal('show');
 
 
     $('#barcoding_items_table_modal').DataTable().destroy();
@@ -957,6 +1105,7 @@ $(document).on('click', '#table_print_serialize', function(){
                   columns : [
                               {"data" : "check_box"},
                               {"data" : "serialize_item_id"},
+                              {"data" : "bar_code"},
                             ]
 
     });
@@ -988,10 +1137,84 @@ $(document).on('click', '#table_print_serialize', function(){
     
    });  
 
-   
 
-   
+   $('#mark_button').on('click', function(e){
+
+      e.preventDefault();
+      
+     $("#modal_loader").attr("hidden",false);
+
+      var rows_selected = table.column(0).checkboxes.selected();
+
+      var selected_item = JSON.parse("[" + rows_selected.join(",") + "]");
+      
+      if(selected_item != ""){
+          $.ajax({
+            url: "{{ route('receiving.selected_serialize_item') }}",
+            type: "post",
+            datatype: "JSON",
+            data:{
+
+                "id": selected_item,
+                "action" : 'mark_printed',
+            },
+            success: function(data) {
+              $('#barcoding_items_table_modal').DataTable().ajax.reload();
+              $('#barcoding_items_table').DataTable().ajax.reload();
+              $("#modal_loader").attr("hidden",true);
+            },
+            error: function(error){
+              Toast.fire({
+                type: 'error',
+                title: 'NetWork Error.'
+              })
+            }
+          });  
+      }
+
+
+   });
+
+      $('#unmark_button').on('click', function(e){
+
+      e.preventDefault();
+
+       $("#modal_loader").attr("hidden",false);
+
+      var rows_selected = table.column(0).checkboxes.selected();
+
+      var selected_item = JSON.parse("[" + rows_selected.join(",") + "]");
+
+      if(selected_item != ""){
+          $.ajax({
+            url: "{{ route('receiving.selected_serialize_item') }}",
+            type: "post",
+            datatype: "JSON",
+            data:{
+
+                "id": selected_item,
+                "action" : 'unmark_printed',
+            },
+            success: function(data) {
+              $('#barcoding_items_table_modal').DataTable().ajax.reload();
+              $('#barcoding_items_table').DataTable().ajax.reload();
+              $("#modal_loader").attr("hidden",true);
+            },
+            error: function(error){
+              Toast.fire({
+                type: 'error',
+                title: 'NetWork Error.'
+              })
+            }
+          });  
+      }
+
+
+      }); 
 });
+
+
+
 
 $(document).on('change', '#expiration_switch', function(){
 
@@ -1008,8 +1231,12 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
 
   if($('.dt-checkboxes').is(':checked')){
     $('#print_button').removeAttr("disabled");
+    $('#mark_button').removeAttr("disabled");
+    $('#unmark_button').removeAttr("disabled");
   }else{
     $('#print_button').attr("disabled", 'disabled');
+    $('#mark_button').attr("disabled", 'disabled');
+    $('#unmark_button').attr("disabled", 'disabled');
   }
   
 });
@@ -1440,9 +1667,10 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
                         <th>Item ID</th>
                         <th>Name</th>
                         <th>Quantity</th>
-                        <th>Price</th>
+                          <!-- <th>Price</th> --> 
                         <th>UOM(Item)</th>
                         <th>Type</th>
+                        <th>Status</th>
                         <th>Date Received</th>
                         <th>Action</th>
                       </tr>
@@ -1461,9 +1689,12 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
           </div>
             <!-- /.tab-content -->
           </div><!-- /.card-body -->
-          <div class="modal fade" id="modal-default">
+          <div class="modal fade" id="modal-serialize">
               <div class="modal-dialog">
                 <div class="modal-content">
+                  <div class="overlay" id="modal_loader" hidden>
+                    <i class="fas fa-3x fa-sync-alt loader"></i>
+                  </div>
                   <div class="modal-header">
                     <h4 class="modal-title">Print Barcode</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -1474,6 +1705,14 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
                   <form role="form" class="form-horizontal" method="POST" target="POPUPW" onsubmit="POPUPW = window.open('about:blank','POPUPW','width=600,height=500');" action="{{ route('receiving.selected_serialize_item') }}" id="selected_serialize_item">
                   {{ csrf_field() }}
                   <button type="submit" class="btn btn-primary btn-block" id="print_button" style="margin-bottom:20px;" disabled><i class="fas fa-print"></i>  Print</button>
+                  <div class="row">
+                    <div class="col-6">
+                      <button class="btn btn-success btn-block" id="mark_button" style="margin-bottom:20px;" disabled><i class="far fa-check-square"></i>  Mark as Printed</button>
+                    </div>
+                    <div class="col-6">
+                      <button class="btn btn-danger btn-block" id="unmark_button" style="margin-bottom:20px;" disabled><i class="far fa-window-close"></i>  Mark as Unprinted</button>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col-6">
                     <div class="form-group" style="margin-top:33px;">
@@ -1507,6 +1746,7 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
                       <tr>
                         <th></th>
                         <th>Serial ID</th>
+                        <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1517,6 +1757,137 @@ $(document).on('change', '.dt-checkboxes-cell', function(){
                   <div class="modal-footer">
                     <button type="button" id="modal_add_close" class="btn btn-default">Add & Close</button>
                     <button type="button" id="modal_add_new" class="btn btn-default">Add & New</button>
+                    <button type="button" id="modal_close" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                  </form>
+                </div>
+                <!-- /.modal-content -->
+              </div>
+              <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+          </div>
+          <div class="modal fade" id="modal-batch">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="overlay" id="modal_loader2" hidden>
+                    <i class="fas fa-3x fa-sync-alt loader"></i>
+                  </div>
+                  <div class="modal-header">
+                    <h4 class="modal-title">Print Barcode</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                  <div class="row">
+                  <div class="col-9">
+                    <button type="submit" class="btn btn-primary btn-block" id="print_button" style="margin-bottom:20px;" disabled><i class="fas fa-print"></i>  Print</button>
+                    <div class="row">
+                      <div class="col-6">
+                        <button class="btn btn-success btn-block" id="mark_button" style="margin-bottom:20px;" disabled><i class="far fa-check-square"></i>  Mark as Printed</button>
+                      </div>
+                      <div class="col-6">
+                        <button class="btn btn-danger btn-block" id="unmark_button" style="margin-bottom:20px;" disabled><i class="far fa-window-close"></i>  Mark as Unprinted</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-3">
+                      <div class="form-group" id="email_this">
+                      <label for="email">Quantity Remaining</label>
+                        <h1 id="item_quantity">0</h1>
+                      </div>
+                  </div>
+                  </div>
+                  <div>
+                     
+                  </div>
+                  <div class="row">
+                      <div class="col-md-12">
+                        <div class="card">
+                          <div class="card-header p-2">
+                            <ul class="nav nav-pills">
+                              <li class="nav-item"><a class="nav-link active" href="#1" data-toggle="tab">Batch List</a></li>
+                              <li class="nav-item"><a class="nav-link" href="#2" data-toggle="tab">Acceptable Item</a></li>
+                            </ul>
+                          </div><!-- /.card-header -->
+                          <div class="card-body">
+                            <div class="tab-content">
+                              <div class="active tab-pane" id="1">
+                                <div class="row">
+                                  <div class="col-3">
+                                    <div class="form-group" id="batch_id_this">
+                                        <input type="text" class="form-control" id="batch_id" name="batch_id" placeholder="Batch ID" readOnly>
+                                    </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="form-group" id="batch_name_this">
+                                        <input type="text" class="form-control" id="batch_name" name="batch_name" placeholder="Name" required>
+                                    </div>
+                                  </div>
+                                  <div class="col-2">
+                                    <div class="form-group" id="batch_qty_this">
+                                        <input type="text" class="form-control" id="batch_qty" name="batch_qty" placeholder="Qty" required>
+                                    </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <!-- Date range -->
+                                    <div class="form-group">
+                                      <div class="input-group">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text">
+                                            <i class="far fa-calendar-alt"></i>
+                                          </span>
+                                        </div>
+                                        <input type="text" class="form-control float-right" id="expiration_date2" name="expiration_date2" placeholder="Expiration Date.">
+                                      </div>
+                                      <!-- /.input group -->
+                                    </div>
+                                    <!-- /.form group -->
+                                  </div>
+                                  <div class="col-1">
+                                    <button class="btn btn-primary" id="add_batch_id"><i class="fas fa-plus"></i></button>
+                                  </div>
+                                </div>
+                                <table class="table" id="batch_list_table" style="width:100%;">
+                                  <thead>
+                                    <tr>
+                                      <th>Batch ID</th>
+                                      <th>Name</th>
+                                      <th>Expiration Date</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <!-- /.tab-pane -->
+                              <div class="tab-pane" id="2">
+                                <table class="table" id="2">
+                                  <thead>
+                                    <tr>
+                                      <th>Item ID</th>
+                                      <th>Name</th>
+                                      <th>Quantity</th>
+                                      <th>UOM(Item)</th>
+                                      <th>Date Added</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  </tbody>
+                                </table>
+                               </div>
+                              <!-- /.tab-pane -->
+                            </div>
+                            <!-- /.tab-content -->
+                          </div><!-- /.card-body -->
+                        </div>
+                        <!-- /.nav-tabs-custom -->
+                      </div>
+                      </div>
+                  <div class="modal-footer">
                     <button type="button" id="modal_close" class="btn btn-default" data-dismiss="modal">Close</button>
                   </div>
                   </form>

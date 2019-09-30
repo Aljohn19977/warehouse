@@ -23,6 +23,6 @@ class Purchase_Order_Item extends Model
     }
 
     public function item(){
-        return $this->belongsToMany('App\Models\Item');
+        return $this->belongsTo('App\Models\Item');
     }
 }
